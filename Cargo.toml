@@ -3,7 +3,6 @@ name = "authentication"
 version = "0.1.0"
 authors = ["realaravinth <realaravinth@batsense.net>"]
 edition = "2018"
-build = "build.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -11,11 +10,14 @@ build = "build.rs"
 actix-web = "2.0"
 actix-rt = "1.0"
 actix-cors = "0.2.0"
+actix-web-static-files = "2.0"
+actix-http = "1.0.1"
+actix-identity = "0.2.1"
 env_logger = "0.7.1"
 serde = "1.0.114"
 listenfd = "0.3"
 tokio = { version = "0.2", features = ["full"] }
-actix-web-static-files = "2.0"
-
-[build-dependencies]
-actix-web-static-files = "2.0"
+failure = "0.1.8"
+juniper = "0.14.2"
+diesel = { version = "1.4", features = ["postgres", "uuidv07", "chrono", "r2d2"] }
+r2d2 = "0.8.9"

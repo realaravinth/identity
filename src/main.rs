@@ -1,84 +1,77 @@
 use actix_cors::Cors;
-use actix_web::{http, middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
+use actix_http::cookie::SameSite;
+use actix_identity::{CookieIdentityPolicy, Identity, IdentityService};
+use actix_web::{
+    http,
+    middleware::{Compress, Logger},
+    web, App, HttpResponse, HttpServer, Responder,
+};
+use env_logger::Env;
 use listenfd::ListenFd;
 use serde::{Deserialize, Serialize};
 
-use env_logger::Env;
-use std::collections::HashMap;
+use std::env;
 
-include!(concat!(env!("OUT_DIR"), "/generated.rs"));
-
-#[derive(Deserialize, Serialize)]
-struct Creds {
-    username: String,
-    password: String,
-}
-
-#[derive(Deserialize, Serialize, Debug)]
-struct NewCreds {
-    username: String,
-    password: String,
-    email: Option<String>,
-}
-
-async fn sign_in(creds: web::Json<Creds>) -> impl Responder {
-    println!("{} {}", creds.username, creds.password);
-    println!("success");
-    HttpResponse::Ok().content_type("application/json").body(
-        "
-        { 'message' : 'received'}
-        ",
-    )
-}
-
-async fn sign_up(creds: web::Json<NewCreds>) -> impl Responder {
-    println!("{:?}", creds);
-    println!("success");
-    HttpResponse::Ok().content_type("application/json").body(
-        "
-        { 'message' : 'received'}
-        ",
-    )
-}
+mod users;
 
 async fn greet() -> impl Responder {
-    HttpResponse::Ok().content_type("text/html").body(
+    HttpResponse::Ok().content_type("application/json").body(
         "
-    <html>
-        <body>
-            <h1> Hello </h1>
-        </body>
-    </html>
-    ",
+        { 'message' : 'received'}
+        ",
     )
 }
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
+    use users::signin::{geti_id, index, sign_in};
+    use users::signup::sign_up;
+    //
+    // DONT
+    //      FOGET TO CHANGE COOKIE_SECRET
+    //
+    //
+    //
+    //
+    //
     let mut listenfd = ListenFd::from_env();
-    std::env::set_var("RUST_LOG", "actix_web=info");
+    env::set_var("RUST_LOG", "actix_web=info");
+    env::set_var(
+        "cookie_secret",
+        "Zae0OOxf^bOJ#zN^&k7VozgW&QAx%n02TQFXpRMG4cCU0xMzgu3dna@tQ9dvc&TlE6p*n#kXUdLZJCQsuODIV%r$@o4%770ePQB7m#dpV!optk01NpY0@615w5e2Br4d"
+    );
     env_logger::init();
     let mut server = HttpServer::new(|| {
         App::new()
+            .wrap(Compress::default())
+            .wrap(IdentityService::new(
+                CookieIdentityPolicy::new(env::var("cookie_secret").unwrap().as_bytes())
+                    .name("auth")
+                    .max_age(20)
+                    .domain("localhost")
+                    .same_site(SameSite::Strict)
+                    .secure(true),
+            ))
             .wrap(
                 Cors::new() // <- Construct CORS middleware builder
                     .send_wildcard()
                     .allowed_methods(vec!["GET", "POST"])
                     .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
                     .allowed_header(http::header::CONTENT_TYPE)
+                    .max_age(3600)
                     .finish(),
             )
             .wrap(Logger::default())
             .service(
                 web::resource("/signin")
                     .route(web::post().to(sign_in))
-                    .route(web::get().to(greet))
+                    .route(web::get().to(index))
                     .route(web::head().to(|| HttpResponse::MethodNotAllowed())),
             )
             .service(
                 web::resource("/signup")
                     .route(web::post().to(sign_up))
-                    .route(web::get().to(greet))
+                    .route(web::get().to(geti_id))
                     .route(web::head().to(|| HttpResponse::MethodNotAllowed())),
             )
     });
