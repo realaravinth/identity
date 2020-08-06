@@ -46,10 +46,10 @@ async fn main() -> std::io::Result<()> {
             .wrap(Compress::default())
             .wrap(IdentityService::new(
                 CookieIdentityPolicy::new(env::var("cookie_secret").unwrap().as_bytes())
-                    .name("auth")
+                    .name("Authorization")
                     .max_age(20)
                     .domain("localhost")
-                    .same_site(SameSite::Strict)
+                    .same_site(SameSite::Lax)
                     .secure(true),
             ))
             .wrap(
