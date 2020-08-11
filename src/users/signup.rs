@@ -1,6 +1,8 @@
 use actix_web::{web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 
+use crate::users::hashify::create_hash;
+
 #[derive(Deserialize, Serialize, Debug)]
 pub struct NewCreds {
     username: String,
@@ -9,11 +11,6 @@ pub struct NewCreds {
 }
 
 pub async fn sign_up(creds: web::Json<NewCreds>) -> impl Responder {
-    println!("{:?}", creds);
-    println!("success");
-    HttpResponse::Ok().content_type("application/json").body(
-        "
-        { 'message' : 'received'}
-        ",
-    )
+    println!("{:?}", create_hash(&creds.password).await);
+    HttpResponse::Ok().finish()
 }

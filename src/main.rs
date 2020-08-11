@@ -9,12 +9,11 @@ use actix_web::{
 use env_logger::Env;
 use listenfd::ListenFd;
 use serde::{Deserialize, Serialize};
-
 use std::env;
 
 mod users;
 
-async fn greet() -> impl Responder {
+fn greet() -> impl Responder {
     HttpResponse::Ok().content_type("application/json").body(
         "
         { 'message' : 'received'}
@@ -35,6 +34,7 @@ async fn main() -> std::io::Result<()> {
     //
     //
     let mut listenfd = ListenFd::from_env();
+    //let metrics = Metrics::new("/metrics", "actix_web_mw_test");
     env::set_var("RUST_LOG", "actix_web=info");
     env::set_var(
         "cookie_secret",
