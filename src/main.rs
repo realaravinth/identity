@@ -3,7 +3,7 @@ use actix_http::cookie::SameSite;
 use actix_identity::{CookieIdentityPolicy, Identity, IdentityService};
 use actix_web::{
     http,
-    middleware::{Compress, Logger},
+    middleware::{Compress, DefaultHeaders, Logger},
     web, App, HttpResponse, HttpServer, Responder,
 };
 use env_logger::Env;
@@ -74,7 +74,8 @@ async fn main() -> std::io::Result<()> {
                     .route(web::get().to(geti_id))
                     .route(web::head().to(|| HttpResponse::MethodNotAllowed())),
             )
-    });
+    })
+    .keep_alive(None);
 
     server = if let Some(l) = listenfd.take_tcp_listener(0).unwrap() {
         server.listen(l)?

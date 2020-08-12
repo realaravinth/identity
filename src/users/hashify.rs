@@ -18,7 +18,7 @@ pub async fn create_hash(password: &str) -> Hashed {
     let config = Config {
         variant: Variant::Argon2i,
         version: Version::Version13,
-        mem_cost: 65536,
+        mem_cost: 656,
         time_cost: 5,
         lanes: 12,
         thread_mode: ThreadMode::Parallel,
