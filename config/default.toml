@@ -1,0 +1,39 @@
+debug = true
+[database]
+# This section deals with the database location and how to access it
+# Please note that at the moment, we have support for only postgresqa.
+
+# The url of your data base, eg: postgres://localhost
+url = "postgres://aravinth:localhost"
+
+# The port at which postgresql is listening to 
+port = "5432"
+# Your postgresql username
+username = "aravinth"
+
+#Your postgresql password
+password = ""
+
+[server]
+# This section deals with the configuration of the actual server
+
+cookie_secret = "Zae0OOxf^bOJ#zN^&k7VozgW&QAx%n02TQFXpRMG4cCU0xMzgu3dna@tQ9dvc&TlE6p*n#kXUdLZJCQsuODIV%r$@o4%770ePQB7m#dpV!optk01NpY0@615w5e2Br4d"
+# The port at which you want authentication to listen to
+# takes a number, choose from 1000-10000 if you dont know what you are doing
+port = 5000
+# enter your hostname, eg: example.com
+host= "localhost" 
+allow_registration = true
+
+
+
+[password_difficulty]
+# WARNING: For advance users only, please don't touch this if you don't know what you are
+# doing. You could significantly weaken the security of your passwords should you
+# misconfigure this section
+mem_cost= 656
+time_cost= 5
+lanes= 12
+hash_length= 32
+
+
