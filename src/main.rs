@@ -19,6 +19,7 @@ use argon2::{Config, ThreadMode, Variant, Version};
 use std::env;
 
 mod database;
+mod errors;
 mod settings;
 mod users;
 
