@@ -8,15 +8,21 @@
 
 * Install Cargo using [rustup](https://rustup.rs/) with:
 
-`$ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+```
+$ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
 
 * Clone the repository with:
 
-`$ git clone https://github.com/shuttlecraft/auth-backend`
+```
+$ git clone https://github.com/shuttlecraft/auth-backend
+```
 
 * Build with Cargo:
 
-` $ cd auth-backend && cargo build`
+``` 
+$ cd auth-backend && cargo build
+```
 
 ## Setup
 
