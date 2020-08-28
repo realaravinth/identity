@@ -1,47 +1,53 @@
+extern crate argon2;
+extern crate config;
 extern crate env_logger;
+extern crate num_cpus;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
-extern crate config;
-
 #[macro_use]
 extern crate lazy_static;
 
 use actix_http::cookie::SameSite;
-use actix_identity::{CookieIdentityPolicy, Identity, IdentityService};
+use actix_identity::{CookieIdentityPolicy, IdentityService};
 use actix_web::{
-    http,
-    middleware::{Compress, DefaultHeaders, Logger},
-    web, App, HttpResponse, HttpServer, Responder,
+    middleware::{Compress, Logger},
+    web, App, HttpResponse, HttpServer,
 };
-
-use listenfd::ListenFd;
+use argon2::{Config, ThreadMode, Variant, Version};
 
 use std::env;
 
+mod database;
 mod settings;
 mod users;
 
+use database::pool::get_connection_pool;
 use settings::Settings;
+use users::signin::{geti_id, index, sign_in};
+use users::signup::sign_up;
 
 lazy_static! {
-    static ref SETTINGS: Settings = Settings::new().unwrap();
-}
-
-fn greet() -> impl Responder {
-    HttpResponse::Ok().content_type("application/json").body(
-        "
-        { 'message' : 'received'}
-        ",
-    )
+    pub static ref SETTINGS: Settings = Settings::new().unwrap();
 }
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
-    use users::signin::{geti_id, index, sign_in};
-    use users::signup::sign_up;
-    let mut listenfd = ListenFd::from_env();
     let cookie_secret = &SETTINGS.server.cookie_secret;
+    let password_config = Config {
+        variant: Variant::Argon2i,
+        version: Version::Version13,
+        mem_cost: SETTINGS.password_difficulty.mem_cost,
+        time_cost: SETTINGS.password_difficulty.time_cost,
+        lanes: SETTINGS.password_difficulty.lanes,
+        thread_mode: ThreadMode::Parallel,
+        secret: &[],
+        ad: &[],
+        hash_length: 32,
+    };
+
+    let database_connection_pool = get_connection_pool(&SETTINGS.database.url);
+
     env::set_var("RUST_LOG", "actix_web=info");
     env_logger::init();
     HttpServer::new(move || {
@@ -56,6 +62,8 @@ async fn main() -> std::io::Result<()> {
                     .secure(true),
             ))
             .wrap(Logger::default())
+            .data(database_connection_pool.clone())
+            .data(password_config.clone())
             .service(
                 web::resource("/signin")
                     .route(web::post().to(sign_in))

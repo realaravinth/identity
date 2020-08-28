@@ -1,8 +1,9 @@
 use config::{Config, ConfigError, Environment, File};
+use num_cpus;
 use std::env;
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct Password_Difficulty {
+pub struct PasswordDifficulty {
     pub mem_cost: u32,
     pub time_cost: u32,
     pub lanes: u32,
@@ -19,10 +20,11 @@ pub struct Server {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Database {
-    pub port: u32,
+    port: u32,
+    hostname: String,
+    username: String,
     pub url: String,
-    pub username: String,
-    pub password: String,
+    password: String,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -30,7 +32,7 @@ pub struct Settings {
     pub debug: bool,
     pub database: Database,
     pub server: Server,
-    pub password_difficulty: Password_Difficulty,
+    pub password_difficulty: PasswordDifficulty,
 }
 
 impl Settings {
@@ -43,7 +45,23 @@ impl Settings {
         s.merge(File::with_name(&format!("config/{}", env)).required(false))?;
 
         s.merge(File::with_name("config/local").required(false))?;
-
+        s.set(
+            "database.url",
+            format!(
+                "postgress://{}:{}@{}:{}/",
+                s.get::<String>("database.username")
+                    .expect("Couldn't access database username"),
+                s.get::<String>("database.password")
+                    .expect("Couldn't access database password"),
+                s.get::<String>("database.hostname")
+                    .expect("Couldn't access database hostname"),
+                s.get::<String>("database.port")
+                    .expect("Couldn't access database port")
+            ),
+        )
+        .expect("Couldn't set databse url");
+        s.set("password_difficulty.lanes", num_cpus::get().to_string())
+            .expect("Couldn't get the number of CPUs");
         s.merge(Environment::with_prefix("AUTH"))?;
         s.try_into()
     }
