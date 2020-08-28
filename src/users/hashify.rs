@@ -7,13 +7,7 @@ fn generate_salt() -> String {
     salt
 }
 
-#[derive(Debug)]
-pub struct Hashed {
-    hash: String,
-    salt: String,
-}
-
-pub async fn create_hash(password: &str) -> Hashed {
+pub async fn create_hash(password: &str) -> String {
     let salt = generate_salt();
     let config = Config {
         variant: Variant::Argon2i,
@@ -27,5 +21,17 @@ pub async fn create_hash(password: &str) -> Hashed {
         hash_length: 32,
     };
     let hash = argon2::hash_encoded(password.as_bytes(), salt.as_bytes(), &config).unwrap();
-    Hashed { hash, salt }
+    hash
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[actix_rt::test]
+    async fn test_crate_hash() {
+        let password = "somepassword";
+        let hash = create_hash(&password).await;
+        assert!(argon2::verify_encoded(&hash, password.as_bytes()).unwrap());
+    }
 }
