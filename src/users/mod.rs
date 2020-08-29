@@ -1,4 +1,3 @@
-pub mod hashify;
-pub mod signin;
-pub mod signout;
-pub mod signup;
+pub mod handler;
+pub mod server;
+pub mod utils;

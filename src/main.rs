@@ -1,5 +1,7 @@
 extern crate argon2;
 extern crate config;
+#[macro_use]
+extern crate diesel;
 extern crate env_logger;
 extern crate num_cpus;
 extern crate serde;
@@ -25,9 +27,7 @@ mod users;
 
 use database::pool::get_connection_pool;
 use settings::Settings;
-use users::signin::{geti_id, index, sign_in};
-use users::signup::sign_up;
-
+use users::server;
 lazy_static! {
     pub static ref SETTINGS: Settings = Settings::new().unwrap();
 }
@@ -62,21 +62,10 @@ async fn main() -> std::io::Result<()> {
                     .same_site(SameSite::Lax)
                     .secure(true),
             ))
+            .configure(server::config)
             .wrap(Logger::default())
             .data(database_connection_pool.clone())
             .data(password_config.clone())
-            .service(
-                web::resource("/signin")
-                    .route(web::post().to(sign_in))
-                    .route(web::get().to(index))
-                    .route(web::head().to(|| HttpResponse::MethodNotAllowed())),
-            )
-            .service(
-                web::resource("/signup")
-                    .route(web::post().to(sign_up))
-                    .route(web::get().to(geti_id))
-                    .route(web::head().to(|| HttpResponse::MethodNotAllowed())),
-            )
     })
     .bind(format!("0.0.0.0:{}", &SETTINGS.server.port))
     .unwrap()
