@@ -1,7 +1,8 @@
+use crate::schema::*;
 use diesel::prelude::*;
 
-#[derive(Insertable)]
-pub struct Users {
+#[derive(Queryable)]
+pub struct User {
     pub username: String,
     pub user_uuid: u32,
     pub hash: String,

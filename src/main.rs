@@ -1,5 +1,7 @@
 extern crate argon2;
 extern crate config;
+extern crate regex;
+extern crate unicode_normalization;
 #[macro_use]
 extern crate diesel;
 extern crate env_logger;
@@ -22,6 +24,7 @@ use std::env;
 
 mod database;
 mod errors;
+mod schema;
 mod settings;
 mod users;
 
