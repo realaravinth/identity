@@ -2,8 +2,8 @@ use super::hashify::create_hash;
 use crate::database::pool::ConnectionPool;
 use crate::errors::ServiceResult;
 use crate::schema::users;
+use crate::users::filters::user_case_mapped::enforce::filter;
 use crate::users::models;
-use crate::users::user_case_mapped::enforce::filter;
 pub async fn create_new_user(
     con: &ConnectionPool,
     username: &str,
