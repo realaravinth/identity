@@ -39,6 +39,16 @@ mod tests {
     }
 
     #[test]
+    fn forbidden_ture3() {
+        let x = ".htaccess_yolo";
+        let y = match forbidden(x) {
+            Ok(_) => false,
+            Err(_) => true,
+        };
+        assert!(y);
+    }
+
+    #[test]
     fn forbidden_false1() {
         let x = "hey";
 

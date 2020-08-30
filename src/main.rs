@@ -68,7 +68,6 @@ async fn main() -> std::io::Result<()> {
             .configure(server::config)
             .wrap(Logger::default())
             .data(database_connection_pool.clone())
-            .data(password_config.clone())
     })
     .bind(format!("0.0.0.0:{}", &SETTINGS.server.port))
     .unwrap()

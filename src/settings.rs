@@ -18,6 +18,7 @@ pub struct Server {
     // TODO yet to be configured
     pub host: String,
     pub cookie_secret: String,
+    pub profainity_filter: bool,
 }
 
 #[derive(Debug, Clone, Deserialize)]

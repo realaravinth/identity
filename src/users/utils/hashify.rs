@@ -1,8 +1,8 @@
+use crate::errors::ServiceError;
+use crate::settings::Settings;
 use argon2::{self, verify_encoded, Config, ThreadMode, Variant, Version};
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
-
-use crate::errors::ServiceError;
 
 fn generate_salt() -> String {
     let salt: String = thread_rng().sample_iter(&Alphanumeric).take(32).collect();
@@ -10,18 +10,21 @@ fn generate_salt() -> String {
 }
 
 pub async fn create_hash(password: &str) -> String {
-    let salt = generate_salt();
+    lazy_static! {
+        static ref SETTINGS: Settings = Settings::new().unwrap();
+    }
     let config = Config {
         variant: Variant::Argon2i,
         version: Version::Version13,
-        mem_cost: 656,
-        time_cost: 5,
-        lanes: 12,
+        mem_cost: SETTINGS.password_difficulty.mem_cost,
+        time_cost: SETTINGS.password_difficulty.time_cost,
+        lanes: SETTINGS.password_difficulty.lanes,
         thread_mode: ThreadMode::Parallel,
         secret: &[],
         ad: &[],
         hash_length: 32,
     };
+    let salt = generate_salt();
     let hash = argon2::hash_encoded(password.as_bytes(), salt.as_bytes(), &config).unwrap();
     hash
 }

@@ -22,6 +22,8 @@ port = 5000
 # enter your hostname, eg: example.com
 host= "localhost" 
 allow_registration = true
+# when true, usernames containing unparliamentary words are filtered out
+profainity_filter = false
 
 
 

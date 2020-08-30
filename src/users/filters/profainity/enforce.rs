@@ -38,6 +38,16 @@ mod tests {
     }
 
     #[test]
+    fn profainity_ture3() {
+        let x = "pundapayale";
+        let y = match beep(x) {
+            Ok(_) => false,
+            Err(_) => true,
+        };
+        assert!(y);
+    }
+
+    #[test]
     fn profainity_false1() {
         let x = "hey";
 
