@@ -25,4 +25,4 @@ config = "0.9"
 lazy_static = "1.4.0"
 num_cpus = "1.13.0"
 unicode-normalization = "0.1.13"
-regex = "1.3.9"
+regex = { version = "1.3.9", features = [ "perf-inline", "perf-dfa", "perf-literal", "perf-cache", "perf"]}

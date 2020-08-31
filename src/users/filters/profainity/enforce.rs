@@ -1,12 +1,8 @@
-use super::tables::PROFAINITY;
 use crate::errors::{ServiceError, ServiceResult};
-use regex::Regex;
+use crate::RE_PROFAINITY;
 
 pub fn beep(target: &str) -> ServiceResult<()> {
-    lazy_static! {
-        static ref RE: Regex = Regex::new(PROFAINITY).unwrap();
-    }
-    if RE.is_match(&target) {
+    if RE_PROFAINITY.is_match(&target) {
         Err(ServiceError::CharError)
     } else {
         Ok(())

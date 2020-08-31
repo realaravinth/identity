@@ -1,5 +1,6 @@
 use crate::errors::ServiceError;
 use crate::settings::Settings;
+use crate::SETTINGS;
 use argon2::{self, verify_encoded, Config, ThreadMode, Variant, Version};
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
@@ -9,10 +10,7 @@ fn generate_salt() -> String {
     salt
 }
 
-pub async fn create_hash(password: &str) -> String {
-    lazy_static! {
-        static ref SETTINGS: Settings = Settings::new().unwrap();
-    }
+pub fn create_hash(password: &str) -> String {
     let config = Config {
         variant: Variant::Argon2i,
         version: Version::Version13,
@@ -29,7 +27,7 @@ pub async fn create_hash(password: &str) -> String {
     hash
 }
 
-pub async fn verify(hash: &str, password: &str) -> Result<(), ServiceError> {
+pub fn verify(hash: &str, password: &str) -> Result<(), ServiceError> {
     if verify_encoded(&hash, password.as_bytes()).unwrap() {
         Ok(())
     } else {
@@ -41,19 +39,17 @@ pub async fn verify(hash: &str, password: &str) -> Result<(), ServiceError> {
 mod tests {
     use super::*;
 
-    #[actix_rt::test]
-    async fn test_crate_hash() {
+    fn test_crate_hash() {
         let password = "somepassword";
-        let hash = create_hash(&password).await;
+        let hash = create_hash(&password);
         assert!(argon2::verify_encoded(&hash, password.as_bytes()).unwrap());
     }
-    #[actix_rt::test]
-    async fn test_unauthorized_verify() {
+    fn test_unauthorized_verify() {
         let password = "somepassword";
-        let hash = create_hash(&password).await;
+        let hash = create_hash(&password);
 
         assert!(
-            verify(&hash, "asdasd").await.is_err(),
+            verify(&hash, "asdasd").is_err(),
             ServiceError::AuthorizationRequired
         );
     }
@@ -61,8 +57,8 @@ mod tests {
     #[actix_rt::test]
     async fn test_sucess_verify() {
         let password = "somepassword";
-        let hash = create_hash(&password).await;
+        let hash = create_hash(&password);
 
-        assert!(verify(&hash, &password).await.is_ok(), ());
+        assert!(verify(&hash, &password).is_ok(), ());
     }
 }

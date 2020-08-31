@@ -20,6 +20,7 @@ use actix_web::{
 };
 use argon2::{Config, ThreadMode, Variant, Version};
 
+use regex::Regex;
 use std::env;
 
 mod database;
@@ -28,11 +29,19 @@ mod schema;
 mod settings;
 mod users;
 
+use crate::users::filters::blacklist::tables::BLACKLIST;
+use crate::users::filters::profainity::tables::PROFAINITY;
+use crate::users::filters::user_case_mapped::tables::USERNAME_CASE_MAPPED;
+
 use database::pool::get_connection_pool;
 use settings::Settings;
 use users::server;
+
 lazy_static! {
     pub static ref SETTINGS: Settings = Settings::new().unwrap();
+    pub static ref RE_BLACKLIST: Regex = Regex::new(BLACKLIST).unwrap();
+    pub static ref RE_PROFAINITY: Regex = Regex::new(PROFAINITY).unwrap();
+    pub static ref RE_USERNAME_CASE_MAPPED: Regex = Regex::new(USERNAME_CASE_MAPPED).unwrap();
 }
 
 #[actix_rt::main]

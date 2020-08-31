@@ -9,15 +9,11 @@
 // except according to those terms.
 //
 
-use super::tables::USERNAME_CASE_MAPPED;
 use crate::errors::{ServiceError, ServiceResult};
-use regex::Regex;
+use crate::RE_USERNAME_CASE_MAPPED;
 
 pub fn filter(target: &str) -> ServiceResult<()> {
-    lazy_static! {
-        static ref RE: Regex = Regex::new(USERNAME_CASE_MAPPED).unwrap();
-    }
-    if RE.is_match(target) {
+    if RE_USERNAME_CASE_MAPPED.is_match(target) {
         Ok(())
     } else {
         Err(ServiceError::CharError)

@@ -1,12 +1,8 @@
-use super::tables::BLACKLIST;
 use crate::errors::{ServiceError, ServiceResult};
-use regex::Regex;
+use crate::RE_BLACKLIST;
 
 pub fn forbidden(target: &str) -> ServiceResult<()> {
-    lazy_static! {
-        static ref RE: Regex = Regex::new(BLACKLIST).unwrap();
-    }
-    if RE.is_match(&target) {
+    if RE_BLACKLIST.is_match(&target) {
         Err(ServiceError::CharError)
     } else {
         Ok(())

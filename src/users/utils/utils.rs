@@ -2,10 +2,10 @@ use super::hashify::create_hash;
 use crate::database::pool::ConnectionPool;
 use crate::errors::ServiceResult;
 use crate::schema::users;
-use crate::settings::Settings;
 use crate::users::filters::blacklist::enforce::forbidden;
 use crate::users::filters::profainity::enforce::beep;
 use crate::users::filters::user_case_mapped::enforce::filter;
+use crate::SETTINGS;
 use unicode_normalization::UnicodeNormalization;
 
 use crate::users::models;
@@ -20,18 +20,11 @@ pub async fn create_new_user_(
     username: &str,
     password: &str,
 ) -> ServiceResult<()> {
-    let creds = create_new_user_runner(&username, &password).await?;
+    let creds = create_new_user_runner(&username, &password)?;
     Ok(())
 }
 
-pub async fn create_new_user_runner(
-    //    con: &ConnectionPool,
-    username: &str,
-    password: &str,
-) -> ServiceResult<username_passowrd> {
-    lazy_static! {
-        pub static ref SETTINGS: Settings = Settings::new().unwrap();
-    }
+pub fn create_new_user_runner(username: &str, password: &str) -> ServiceResult<username_passowrd> {
     let normalised_username = username.to_lowercase().nfc().collect::<String>();
 
     filter(&normalised_username)?;
@@ -41,7 +34,7 @@ pub async fn create_new_user_runner(
         beep(&normalised_username)?;
     }
 
-    let hash = create_hash(password).await;
+    let hash = create_hash(password);
     Ok(username_passowrd {
         normalised_username,
         hash,
@@ -53,26 +46,24 @@ mod tests {
 
     use super::*;
 
-    #[actix_rt::test]
-    async fn utils_create_new_user_runner() {
-        let creds = create_new_user_runner("Realaravinth", "password")
-            .await
-            .unwrap();
+    #[test]
+    fn utils_create_new_user_runner() {
+        let creds = create_new_user_runner("Realaravinth", "password").unwrap();
         assert_eq!(creds.normalised_username, "realaravinth");
     }
 
-    #[actix_rt::test]
-    async fn utils_create_new_user_runner1() {
-        let creds = create_new_user_runner("fuck", "password").await;
+    #[test]
+    fn utils_create_new_user_runner1() {
+        let creds = create_new_user_runner("fuck", "password");
         match creds {
             Ok(_) => assert!(false),
             Err(_) => assert!(true),
         }
     }
 
-    #[actix_rt::test]
-    async fn utils_create_new_user_runner2() {
-        let creds = create_new_user_runner(".htaccessasnc", "password").await;
+    #[test]
+    fn utils_create_new_user_runner2() {
+        let creds = create_new_user_runner(".htaccessasnc", "password");
         match creds {
             Ok(_) => assert!(false),
             Err(_) => assert!(true),
