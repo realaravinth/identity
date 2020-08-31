@@ -12,14 +12,12 @@
 use super::tables::USERNAME_CASE_MAPPED;
 use crate::errors::{ServiceError, ServiceResult};
 use regex::Regex;
-use unicode_normalization::UnicodeNormalization;
 
 pub fn filter(target: &str) -> ServiceResult<()> {
     lazy_static! {
         static ref RE: Regex = Regex::new(USERNAME_CASE_MAPPED).unwrap();
     }
-    let normalised = target.nfc().collect::<String>();
-    if RE.is_match(&normalised) {
+    if RE.is_match(target) {
         Ok(())
     } else {
         Err(ServiceError::CharError)
