@@ -10,21 +10,23 @@ use unicode_normalization::UnicodeNormalization;
 
 use crate::users::models;
 
+#[derive(Debug)]
 pub struct username_passowrd {
     pub normalised_username: String,
     pub hash: String,
 }
 
-pub async fn create_new_user_(
-    con: &ConnectionPool,
+pub async fn create_new_user(
+    //    con: &ConnectionPool,
     username: &str,
     password: &str,
 ) -> ServiceResult<()> {
     let creds = create_new_user_runner(&username, &password)?;
+    println!("{:?}", creds);
     Ok(())
 }
 
-pub fn create_new_user_runner(username: &str, password: &str) -> ServiceResult<username_passowrd> {
+fn create_new_user_runner(username: &str, password: &str) -> ServiceResult<username_passowrd> {
     let normalised_username = username.to_lowercase().nfc().collect::<String>();
 
     filter(&normalised_username)?;

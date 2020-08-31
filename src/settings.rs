@@ -17,6 +17,7 @@ pub struct Server {
     pub port: u32,
     // TODO yet to be configured
     pub host: String,
+    pub domain: String,
     pub cookie_secret: String,
     pub profainity_filter: bool,
 }
@@ -51,7 +52,7 @@ impl Settings {
         s.set(
             "database.url",
             format!(
-                "postgress://{}:{}@{}:{}/",
+                r"postgres://{}:{}@{}:{}/{}",
                 s.get::<String>("database.username")
                     .expect("Couldn't access database username"),
                 s.get::<String>("database.password")
@@ -59,7 +60,9 @@ impl Settings {
                 s.get::<String>("database.hostname")
                     .expect("Couldn't access database hostname"),
                 s.get::<String>("database.port")
-                    .expect("Couldn't access database port")
+                    .expect("Couldn't access database port"),
+                s.get::<String>("database.database_name")
+                    .expect("Couldn't access database name")
             ),
         )
         .expect("Couldn't set databse url");

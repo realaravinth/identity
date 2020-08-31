@@ -14,11 +14,11 @@ extern crate lazy_static;
 
 use actix_http::cookie::SameSite;
 use actix_identity::{CookieIdentityPolicy, IdentityService};
+use actix_session::CookieSession;
 use actix_web::{
     middleware::{Compress, Logger},
-    web, App, HttpResponse, HttpServer,
+    App, HttpServer,
 };
-use argon2::{Config, ThreadMode, Variant, Version};
 
 use regex::Regex;
 use std::env;
@@ -47,17 +47,6 @@ lazy_static! {
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
     let cookie_secret = &SETTINGS.server.cookie_secret;
-    let password_config = Config {
-        variant: Variant::Argon2i,
-        version: Version::Version13,
-        mem_cost: SETTINGS.password_difficulty.mem_cost,
-        time_cost: SETTINGS.password_difficulty.time_cost,
-        lanes: SETTINGS.password_difficulty.lanes,
-        thread_mode: ThreadMode::Parallel,
-        secret: &[],
-        ad: &[],
-        hash_length: 32,
-    };
 
     let database_connection_pool = get_connection_pool(&SETTINGS.database.url);
 
@@ -66,6 +55,13 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .wrap(Compress::default())
+            .wrap(
+                CookieSession::signed(&cookie_secret.as_bytes())
+                    .domain("www.rust-lang.org")
+                    .name("actix_session")
+                    .path("/")
+                    .secure(true),
+            )
             .wrap(IdentityService::new(
                 CookieIdentityPolicy::new(cookie_secret.as_bytes())
                     .name("Authorization")

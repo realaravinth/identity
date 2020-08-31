@@ -4,8 +4,12 @@ use serde::{Deserialize, Serialize};
 
 use super::utils::hashify::{create_hash, verify};
 use super::utils::utils;
+use super::utils::utils::create_new_user;
 
 pub async fn sign_up(creds: web::Json<NewCreds>) -> impl Responder {
+    create_new_user(&creds.username, &creds.password)
+        .await
+        .unwrap();
     HttpResponse::Ok()
         .set_header(actix_web::http::header::CONNECTION, "close")
         .finish()

@@ -39,11 +39,14 @@ pub fn verify(hash: &str, password: &str) -> Result<(), ServiceError> {
 mod tests {
     use super::*;
 
+    #[test]
     fn test_crate_hash() {
         let password = "somepassword";
         let hash = create_hash(&password);
         assert!(argon2::verify_encoded(&hash, password.as_bytes()).unwrap());
     }
+
+    #[test]
     fn test_unauthorized_verify() {
         let password = "somepassword";
         let hash = create_hash(&password);
@@ -54,8 +57,8 @@ mod tests {
         );
     }
 
-    #[actix_rt::test]
-    async fn test_sucess_verify() {
+    #[test]
+    fn test_sucess_verify() {
         let password = "somepassword";
         let hash = create_hash(&password);
 

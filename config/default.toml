@@ -11,6 +11,7 @@ hostname = "localhost"
 port = "5432"
 username = "aravinth"
 password = ""
+database_name = "authdevel"
 
 [server]
 # This section deals with the configuration of the actual server
@@ -21,6 +22,7 @@ cookie_secret = "Zae0OOxf^bOJ#zN^&k7VozgW&QAx%n02TQFXpRMG4cCU0xMzgu3dna@tQ9dvc&T
 port = 5000
 # enter your hostname, eg: example.com
 host= "localhost" 
+domain = "batsense.net"
 allow_registration = true
 # when true, usernames containing unparliamentary words are filtered out
 profainity_filter = true
