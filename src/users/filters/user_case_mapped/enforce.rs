@@ -14,13 +14,13 @@ use crate::errors::{ServiceError, ServiceResult};
 use regex::Regex;
 use unicode_normalization::UnicodeNormalization;
 
-pub fn filter(target: &str) -> ServiceResult<String> {
+pub fn filter(target: &str) -> ServiceResult<()> {
     lazy_static! {
         static ref RE: Regex = Regex::new(USERNAME_CASE_MAPPED).unwrap();
     }
     let normalised = target.nfc().collect::<String>();
     if RE.is_match(&normalised) {
-        Ok(normalised)
+        Ok(())
     } else {
         Err(ServiceError::CharError)
     }
@@ -32,12 +32,12 @@ mod tests {
     #[test]
     fn test() {
         let x = "\u{0065}";
-        assert_eq!(filter(x).unwrap(), x)
+        filter(x).unwrap()
     }
     #[test]
     fn test2() {
         let x = "\u{0063}";
-        assert_eq!(filter(x).unwrap(), x)
+        filter(x).unwrap()
     }
     #[test]
     fn test3() {

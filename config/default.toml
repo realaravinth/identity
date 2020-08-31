@@ -23,7 +23,7 @@ port = 5000
 host= "localhost" 
 allow_registration = true
 # when true, usernames containing unparliamentary words are filtered out
-profainity_filter = false
+profainity_filter = true
 
 
 
