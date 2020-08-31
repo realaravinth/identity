@@ -22,7 +22,7 @@ cookie_secret = "Zae0OOxf^bOJ#zN^&k7VozgW&QAx%n02TQFXpRMG4cCU0xMzgu3dna@tQ9dvc&T
 port = 5000
 # enter your hostname, eg: example.com
 host= "localhost" 
-domain = "batsense.net"
+domain = "localhost"
 allow_registration = true
 # when true, usernames containing unparliamentary words are filtered out
 profainity_filter = true

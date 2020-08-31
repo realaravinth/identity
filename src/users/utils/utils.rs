@@ -8,13 +8,7 @@ use crate::users::filters::user_case_mapped::enforce::filter;
 use crate::SETTINGS;
 use unicode_normalization::UnicodeNormalization;
 
-use crate::users::models;
-
-#[derive(Debug)]
-pub struct username_passowrd {
-    pub normalised_username: String,
-    pub hash: String,
-}
+use crate::users::models::*;
 
 pub async fn create_new_user(
     //    con: &ConnectionPool,
@@ -26,7 +20,7 @@ pub async fn create_new_user(
     Ok(())
 }
 
-fn create_new_user_runner(username: &str, password: &str) -> ServiceResult<username_passowrd> {
+fn create_new_user_runner(username: &str, password: &str) -> ServiceResult<InsertableCreds> {
     let normalised_username = username.to_lowercase().nfc().collect::<String>();
 
     filter(&normalised_username)?;
@@ -37,7 +31,7 @@ fn create_new_user_runner(username: &str, password: &str) -> ServiceResult<usern
     }
 
     let hash = create_hash(password);
-    Ok(username_passowrd {
+    Ok(InsertableCreds {
         normalised_username,
         hash,
     })
