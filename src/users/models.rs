@@ -30,3 +30,15 @@ pub struct NewCreds {
     pub password: String,
     pub email: Option<String>,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PoWResponse {
+    pub nonce: u64,
+    pub result: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PoWConfig {
+    pub phrase: String,
+    pub difficulty: u128,
+}

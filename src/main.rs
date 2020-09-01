@@ -60,16 +60,16 @@ async fn main() -> std::io::Result<()> {
                     .domain(&SETTINGS.server.domain)
                     .name("shuttlecraft-session")
                     .path("/")
-                    .secure(true),
+                    .secure(false),
             )
-            //            .wrap(IdentityService::new(
-            //                CookieIdentityPolicy::new(cookie_secret.as_bytes())
-            //                    .name("Authorization")
-            //                    .max_age(20)
-            //                    .domain("localhost")
-            //                    .same_site(SameSite::Lax)
-            //                    .secure(true),
-            //            ))
+            .wrap(IdentityService::new(
+                CookieIdentityPolicy::new(cookie_secret.as_bytes())
+                    .name("Authorization")
+                    .max_age(20)
+                    .domain("localhost")
+                    .same_site(SameSite::Lax)
+                    .secure(true),
+            ))
             .configure(server::config)
             .wrap(Logger::default())
             .data(database_connection_pool.clone())
