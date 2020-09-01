@@ -2,6 +2,7 @@ use actix_web::web::{self, HttpResponse};
 
 use crate::users::handler::{init, sign_in, sign_out, sign_up, verify_pow};
 
+#[cfg(not(tarpaulin_include))]
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::resource("/api/signin")

@@ -45,6 +45,7 @@ lazy_static! {
 }
 
 #[actix_rt::main]
+#[cfg(not(tarpaulin_include))]
 async fn main() -> std::io::Result<()> {
     let cookie_secret = &SETTINGS.server.cookie_secret;
 
