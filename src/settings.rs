@@ -15,7 +15,6 @@ pub struct Server {
     // TODO yet to be configured
     pub allow_registration: bool,
     pub port: u32,
-    // TODO yet to be configured
     pub host: String,
     pub domain: String,
     pub cookie_secret: String,

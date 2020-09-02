@@ -6,7 +6,7 @@ use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
 
 pub async fn verify_pow(session: &Session, pow: &PoW<Vec<u8>>) -> ServiceResult<()> {
-    let session_id = session.get::<String>("PoW").unwrap();
+    let session_id = session.get::<String>("PoW")?;
     if let Some(id) = session_id {
         let difficulty = u128::max_value() - u128::max_value() / 100_00000;
 
@@ -21,14 +21,14 @@ pub async fn verify_pow(session: &Session, pow: &PoW<Vec<u8>>) -> ServiceResult<
 }
 
 pub async fn gen_pow(session: &Session) -> ServiceResult<PoWConfig> {
-    let session_id = session.get::<String>("PoW").unwrap();
-    if let Some(_id) = session_id {
+    let session_id = session.get::<String>("PoW");
+    if let Some(_id) = session_id? {
         Err(ServiceError::PoWRequired)
     } else {
         // TODO: Move difficulty into app state
         let difficulty = u128::max_value() - u128::max_value() / 100_00000;
         let phrase: String = thread_rng().sample_iter(&Alphanumeric).take(32).collect();
-        session.set("PoW", &phrase).unwrap();
+        session.set("PoW", &phrase)?;
         Ok(PoWConfig { difficulty, phrase })
     }
 }

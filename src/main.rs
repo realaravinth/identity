@@ -39,10 +39,13 @@ use settings::Settings;
 use users::server;
 
 lazy_static! {
-    pub static ref SETTINGS: Settings = Settings::new().unwrap();
-    pub static ref RE_BLACKLIST: Regex = Regex::new(BLACKLIST).unwrap();
-    pub static ref RE_PROFAINITY: Regex = Regex::new(PROFAINITY).unwrap();
-    pub static ref RE_USERNAME_CASE_MAPPED: Regex = Regex::new(USERNAME_CASE_MAPPED).unwrap();
+    pub static ref SETTINGS: Settings = Settings::new().expect("couldn't load settings");
+    pub static ref RE_BLACKLIST: Regex =
+        Regex::new(BLACKLIST).expect("couldn't setup blacklist list filter");
+    pub static ref RE_PROFAINITY: Regex =
+        Regex::new(PROFAINITY).expect("coudln't setup profainity filter");
+    pub static ref RE_USERNAME_CASE_MAPPED: Regex =
+        Regex::new(USERNAME_CASE_MAPPED).expect("coudln't setup username case mapped filter");
 }
 
 #[actix_rt::main]
@@ -74,7 +77,7 @@ async fn main() -> std::io::Result<()> {
                 CookieIdentityPolicy::new(cookie_secret.as_bytes())
                     .name("Authorization")
                     .max_age(20)
-                    .domain("localhost")
+                    .domain(&SETTINGS.server.domain)
                     .same_site(SameSite::Lax)
                     .secure(true),
             ))
@@ -82,8 +85,14 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::default())
             .data(database_connection_pool.clone())
     })
-    .bind(format!("0.0.0.0:{}", &SETTINGS.server.port))
-    .unwrap()
+    .bind(format!(
+        "{}:{}",
+        &SETTINGS.server.host, &SETTINGS.server.port
+    ))
+    .expect(&format!(
+        "Couldn't bind to IP address: {} and port: {}, are they avaiable?",
+        &SETTINGS.server.host, &SETTINGS.server.port
+    ))
     .run()
     .await
 }

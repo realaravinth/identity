@@ -1,4 +1,4 @@
-use crate::errors::ServiceError;
+use crate::errors::*;
 use crate::SETTINGS;
 use argon2::{self, verify_encoded, Config, ThreadMode, Variant, Version};
 use rand::distributions::Alphanumeric;
@@ -26,8 +26,8 @@ pub fn create_hash(password: &str) -> String {
     hash
 }
 
-pub fn verify(hash: &str, password: &str) -> Result<(), ServiceError> {
-    if verify_encoded(&hash, password.as_bytes()).unwrap() {
+pub fn verify(hash: &str, password: &str) -> ServiceResult<()> {
+    if verify_encoded(&hash, password.as_bytes())? {
         Ok(())
     } else {
         Err(ServiceError::AuthorizationRequired)

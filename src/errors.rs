@@ -67,4 +67,16 @@ impl From<DBError> for ServiceError {
     }
 }
 
+impl From<actix_http::Error> for ServiceError {
+    fn from(error: actix_http::Error) -> ServiceError {
+        ServiceError::InternalServerError
+    }
+}
+
+impl From<argon2::Error> for ServiceError {
+    fn from(error: argon2::Error) -> ServiceError {
+        ServiceError::InternalServerError
+    }
+}
+
 pub type ServiceResult<V> = std::result::Result<V, crate::errors::ServiceError>;
