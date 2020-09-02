@@ -1,3 +1,21 @@
+// Copyright (c) 2020 Aravinth T M <realaravinth@batsense.net>.
+// See the COPYRIGHT file at the top-level directory of this
+// distribution
+
+//This program is free software; you can redistribute it and/or
+//modify it under the terms of the GNU General Public License
+//as published by the Free Software Foundation; either version 2
+//of the License, or (at your option) any later version.
+
+//This program is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//GNU General Public License for more details.
+
+//You should have received a copy of the GNU General Public License
+//along with this program; if not, write to the Free Software
+//Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 use actix_http::ResponseBuilder;
 use actix_web::{error::ResponseError, http::header, http::StatusCode, HttpResponse};
 use diesel::result::Error as DBError;
@@ -6,7 +24,7 @@ use serde::{Deserialize, Serialize};
 
 use std::convert::From;
 
-#[derive(Debug, Fail)]
+#[derive(Debug, PartialEq, Fail)]
 #[cfg(not(tarpaulin_include))]
 pub enum ServiceError {
     #[fail(display = "some characters are not permitted")] //405j

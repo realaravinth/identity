@@ -1,3 +1,21 @@
+// Copyright (c) 2020 Aravinth T M <realaravinth@batsense.net>.
+// See the COPYRIGHT file at the top-level directory of this
+// distribution
+
+//This program is free software; you can redistribute it and/or
+//modify it under the terms of the GNU General Public License
+//as published by the Free Software Foundation; either version 2
+//of the License, or (at your option) any later version.
+
+//This program is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//GNU General Public License for more details.
+
+//You should have received a copy of the GNU General Public License
+//along with this program; if not, write to the Free Software
+//Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 use crate::errors::{ServiceError, ServiceResult};
 use crate::RE_BLACKLIST;
 
@@ -14,54 +32,13 @@ mod tests {
     use super::*;
 
     #[test]
-    fn forbidden_ture1() {
-        let x = "zlib";
+    fn test_forbidden() {
+        let illegal = "zlib";
+        let legal = "rust";
+        let illegal2 = ".htaccess_yolo";
 
-        let y = match forbidden(x) {
-            Ok(_) => false,
-            Err(_) => true,
-        };
-        assert!(y);
-    }
-
-    #[test]
-    fn forbidden_ture2() {
-        let x = ".htaccess";
-        let y = match forbidden(x) {
-            Ok(_) => false,
-            Err(_) => true,
-        };
-        assert!(y);
-    }
-
-    #[test]
-    fn forbidden_ture3() {
-        let x = ".htaccess_yolo";
-        let y = match forbidden(x) {
-            Ok(_) => false,
-            Err(_) => true,
-        };
-        assert!(y);
-    }
-
-    #[test]
-    fn forbidden_false1() {
-        let x = "hey";
-
-        let y = match forbidden(x) {
-            Ok(_) => true,
-            Err(_) => false,
-        };
-        assert!(y);
-    }
-
-    #[test]
-    fn forbidden_false2() {
-        let x = "rust";
-        let y = match forbidden(x) {
-            Ok(_) => true,
-            Err(_) => false,
-        };
-        assert!(y);
+        assert_eq!(forbidden(legal), Ok(()));
+        assert_eq!(forbidden(illegal), Err(ServiceError::CharError));
+        assert_eq!(forbidden(illegal2), Err(ServiceError::CharError));
     }
 }

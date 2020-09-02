@@ -24,31 +24,10 @@ pub fn filter(target: &str) -> ServiceResult<()> {
 mod tests {
     use super::*;
     #[test]
-    fn test() {
-        let x = "\u{0065}";
-        filter(x).unwrap()
-    }
-    #[test]
-    fn test2() {
-        let x = "\u{0063}";
-        filter(x).unwrap()
-    }
-    #[test]
-    fn test3() {
-        let x = "\u{0000}";
-        let y = match filter(x) {
-            Ok(_) => false,
-            Err(_x) => true,
-        };
-        assert!(y);
-    }
-    #[test]
-    fn test4() {
-        let x = "\u{0001}";
-        let y = match filter(x) {
-            Ok(_) => false,
-            Err(_) => true,
-        };
-        assert!(y);
+    fn test_usercase_mapped() {
+        let legal = "\u{0065}";
+        let illegal = "\u{0000}";
+        assert_eq!(filter(legal), Ok(()));
+        assert_eq!(filter(illegal), Err(ServiceError::CharError));
     }
 }
