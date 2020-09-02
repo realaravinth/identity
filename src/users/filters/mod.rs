@@ -1,3 +1,3 @@
-pub mod blacklist;
-pub mod profainity;
-pub mod user_case_mapped;
+pub(crate) mod blacklist;
+pub(crate) mod profainity;
+pub(crate) mod user_case_mapped;

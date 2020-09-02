@@ -25,6 +25,7 @@ use std::env;
 
 mod database;
 mod errors;
+mod pow;
 mod schema;
 mod settings;
 mod users;
@@ -45,7 +46,6 @@ lazy_static! {
 }
 
 #[actix_rt::main]
-#[cfg(not(tarpaulin_include))]
 async fn main() -> std::io::Result<()> {
     let cookie_secret = &SETTINGS.server.cookie_secret;
 
@@ -60,6 +60,13 @@ async fn main() -> std::io::Result<()> {
                 CookieSession::signed(&cookie_secret.as_bytes())
                     .domain(&SETTINGS.server.domain)
                     .name("shuttlecraft-session")
+                    .path("/")
+                    .secure(false),
+            )
+            .wrap(
+                CookieSession::signed(&cookie_secret.as_bytes())
+                    .domain(&SETTINGS.server.domain)
+                    .name("on")
                     .path("/")
                     .secure(false),
             )

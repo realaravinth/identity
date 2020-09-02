@@ -1,14 +1,12 @@
-use super::hashify::create_hash;
-use crate::database::pool::ConnectionPool;
+use unicode_normalization::UnicodeNormalization;
+
+use super::create_hash;
 use crate::errors::ServiceResult;
-use crate::schema::users;
 use crate::users::filters::blacklist::enforce::forbidden;
 use crate::users::filters::profainity::enforce::beep;
 use crate::users::filters::user_case_mapped::enforce::filter;
+use crate::users::InsertableCreds;
 use crate::SETTINGS;
-use unicode_normalization::UnicodeNormalization;
-
-use crate::users::models::*;
 
 pub async fn create_new_user(
     //    con: &ConnectionPool,

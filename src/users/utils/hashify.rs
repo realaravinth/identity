@@ -1,5 +1,4 @@
 use crate::errors::ServiceError;
-use crate::settings::Settings;
 use crate::SETTINGS;
 use argon2::{self, verify_encoded, Config, ThreadMode, Variant, Version};
 use rand::distributions::Alphanumeric;

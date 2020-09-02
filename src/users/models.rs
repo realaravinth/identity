@@ -1,5 +1,4 @@
-use crate::schema::*;
-use diesel::prelude::*;
+use pow_sha256::PoW;
 use serde::{Deserialize, Serialize};
 
 #[derive(Queryable)]
@@ -29,16 +28,5 @@ pub struct NewCreds {
     pub username: String,
     pub password: String,
     pub email: Option<String>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct PoWResponse {
-    pub nonce: u64,
-    pub result: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct PoWConfig {
-    pub phrase: String,
-    pub difficulty: u128,
+    pub pow: PoW<Vec<u8>>,
 }

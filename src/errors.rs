@@ -23,6 +23,8 @@ pub enum ServiceError {
     BadRequest,
     #[fail(display = "Unable to connect to DB")]
     UnableToConnectToDb,
+    #[fail(display = "PoW required, request not processed")]
+    PoWRequired,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -49,6 +51,7 @@ impl ResponseError for ServiceError {
             ServiceError::BadRequest => StatusCode::BAD_REQUEST,
             ServiceError::Timeout => StatusCode::GATEWAY_TIMEOUT,
             ServiceError::UnableToConnectToDb => StatusCode::INTERNAL_SERVER_ERROR,
+            ServiceError::PoWRequired => StatusCode::PAYMENT_REQUIRED,
         }
     }
 }
