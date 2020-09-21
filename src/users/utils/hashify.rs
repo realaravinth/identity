@@ -27,7 +27,7 @@ fn generate_salt() -> String {
     salt
 }
 
-pub fn create_hash(password: &str) -> String {
+pub fn create_hash(password: &str) -> ServiceResult<String> {
     let config = Config {
         variant: Variant::Argon2i,
         version: Version::Version13,
@@ -40,8 +40,8 @@ pub fn create_hash(password: &str) -> String {
         hash_length: 32,
     };
     let salt = generate_salt();
-    let hash = argon2::hash_encoded(password.as_bytes(), salt.as_bytes(), &config).unwrap();
-    hash
+    let hash = argon2::hash_encoded(password.as_bytes(), salt.as_bytes(), &config)?;
+    Ok(hash)
 }
 
 pub fn verify(hash: &str, password: &str) -> ServiceResult<()> {
@@ -59,14 +59,14 @@ mod tests {
     #[test]
     fn test_crate_hash() {
         let password = "somepassword";
-        let hash = create_hash(&password);
+        let hash = create_hash(&password).unwrap();
         assert!(argon2::verify_encoded(&hash, password.as_bytes()).unwrap());
     }
 
     #[test]
     fn test_verify() {
         let password = "somepassword";
-        let hash = create_hash(&password);
+        let hash = create_hash(&password).unwrap();
 
         assert_eq!(
             verify(&hash, "asdasd"),

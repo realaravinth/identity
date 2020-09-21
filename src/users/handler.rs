@@ -26,11 +26,14 @@ use super::{Creds, NewCreds};
 use crate::errors::ServiceResult;
 use crate::pow::verify_pow;
 
-pub async fn sign_up(session: Session, creds: web::Json<Creds>) -> ServiceResult<impl Responder> {
+pub async fn sign_up(
+    session: Session,
+    creds: web::Json<NewCreds>,
+) -> ServiceResult<impl Responder> {
     let new_creds = creds.into_inner();
-    create_new_user(&new_creds.username, &new_creds.password)
-        .await
-        .unwrap();
+    let pow = &new_creds.pow;
+    verify_pow(&session, &pow).await?;
+    create_new_user(&new_creds.creds.username, &new_creds.creds.password).await?;
     Ok(HttpResponse::Ok()
         .set_header(actix_web::http::header::CONNECTION, "close")
         .finish())

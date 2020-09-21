@@ -46,16 +46,15 @@ pub struct Creds {
     pub password: String,
 }
 
-#[derive(Debug, Deserialize, PartialEq, Serialize)]
-pub struct ProcessCreds {
-    pub normalised_username: String,
-    pub hash: String,
-}
+//#[derive(Debug, Deserialize, PartialEq, Serialize)]
+//pub struct ProcessCreds {
+//    pub normalised_username: String,
+//    pub hash: String,
+//}
 
 #[derive(Deserialize, Serialize, Debug, PartialEq)]
 pub struct NewCreds {
-    pub username: String,
-    pub password: String,
+    pub creds: Creds,
     pub email: Option<String>,
     pub pow: PoW<Vec<u8>>,
 }

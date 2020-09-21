@@ -46,7 +46,7 @@ fn create_new_user_runner(username: &str, password: &str) -> ServiceResult<Inser
         beep(&normalised_username)?;
     }
 
-    let hash = create_hash(password);
+    let hash = create_hash(password)?;
     Ok(InsertableCreds::default(normalised_username, hash))
 }
 
