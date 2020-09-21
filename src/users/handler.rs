@@ -19,22 +19,18 @@
 use actix_identity::Identity;
 use actix_session::Session;
 use actix_web::{web, HttpResponse, Responder};
+use futures;
 
 use super::create_new_user;
-
 use super::{Creds, NewCreds};
 use crate::errors::ServiceResult;
 use crate::pow::verify_pow;
 
-pub async fn sign_up(
-    session: Session,
-    creds: web::Json<NewCreds>,
-) -> ServiceResult<impl Responder> {
+pub async fn sign_up(session: Session, creds: web::Json<Creds>) -> ServiceResult<impl Responder> {
     let new_creds = creds.into_inner();
-    let pow = &new_creds.pow;
-    verify_pow(&session, &pow).await?;
-    create_new_user(&new_creds.username, &new_creds.password).await?;
-
+    create_new_user(&new_creds.username, &new_creds.password)
+        .await
+        .unwrap();
     Ok(HttpResponse::Ok()
         .set_header(actix_web::http::header::CONNECTION, "close")
         .finish())

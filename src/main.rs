@@ -15,11 +15,13 @@
 //You should have received a copy of the GNU General Public License
 //along with this program; if not, write to the Free Software
 //Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-
+extern crate actix;
 extern crate argon2;
 extern crate config;
+extern crate futures;
 extern crate regex;
 extern crate unicode_normalization;
+extern crate uuid;
 #[macro_use]
 extern crate diesel;
 extern crate env_logger;

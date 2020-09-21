@@ -18,13 +18,24 @@
 
 use pow_sha256::PoW;
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 #[derive(Debug, PartialEq, Deserialize, Serialize, Queryable)]
 pub struct User {
     pub username: String,
-    pub user_uuid: u32,
+    pub user_uuid: Uuid,
     pub hash: String,
     pub email: String,
+    pub role: String,
+    pub name: String,
+}
+
+#[derive(Debug, PartialEq, Deserialize, Serialize, Queryable)]
+pub struct InsertableCreds {
+    pub username: String,
+    pub user_uuid: Uuid,
+    pub hash: String,
+    pub email: Option<String>,
     pub role: String,
     pub name: String,
 }
@@ -36,7 +47,7 @@ pub struct Creds {
 }
 
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
-pub struct InsertableCreds {
+pub struct ProcessCreds {
     pub normalised_username: String,
     pub hash: String,
 }
@@ -47,4 +58,33 @@ pub struct NewCreds {
     pub password: String,
     pub email: Option<String>,
     pub pow: PoW<Vec<u8>>,
+}
+
+impl InsertableCreds {
+    pub fn default(username: String, hash: String) -> Self {
+        let name = username.clone();
+        let user_uuid = Uuid::new_v4();
+        let email = None;
+        let role = "user".to_string();
+        InsertableCreds {
+            username,
+            user_uuid,
+            hash,
+            email,
+            role,
+            name,
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_insertable_default() {
+        let creds = InsertableCreds::default(String::from("yadayada"), String::from("asdasdasd"));
+        assert_eq!(creds.username, creds.name);
+        assert_eq!(creds.username, "yadayada");
+        assert_eq!(creds.role, "user");
+    }
 }

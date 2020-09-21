@@ -51,9 +51,9 @@ pub fn verify(hash: &str, password: &str) -> ServiceResult<()> {
         Err(ServiceError::AuthorizationRequired)
     }
 }
-
 #[cfg(test)]
 mod tests {
+
     use super::*;
 
     #[test]

@@ -38,7 +38,7 @@ pub async fn create_new_user(
 
 fn create_new_user_runner(username: &str, password: &str) -> ServiceResult<InsertableCreds> {
     let normalised_username = username.to_lowercase().nfc().collect::<String>();
-
+    // TODO chain ffilters
     filter(&normalised_username)?;
     forbidden(&normalised_username)?;
 
@@ -47,10 +47,7 @@ fn create_new_user_runner(username: &str, password: &str) -> ServiceResult<Inser
     }
 
     let hash = create_hash(password);
-    Ok(InsertableCreds {
-        normalised_username,
-        hash,
-    })
+    Ok(InsertableCreds::default(normalised_username, hash))
 }
 
 #[cfg(test)]
@@ -64,7 +61,7 @@ mod tests {
         let profanity = create_new_user_runner("fuck", "password");
         let forbidden_creds = create_new_user_runner(".htaccessasnc", "password");
 
-        assert_eq!(creds.normalised_username, "realaravinth");
+        assert_eq!(creds.username, "realaravinth");
         assert_eq!(profanity, Err(ServiceError::CharError));
         assert_eq!(forbidden_creds, Err(ServiceError::CharError));
     }
