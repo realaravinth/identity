@@ -1,5 +1,4 @@
 /*
-* Wagon is an independent mailing list manager
 * Copyright (C) 2020  Aravinth Manivannan <realaravinth@batsense.net>
 *
 * This program is free software: you can redistribute it and/or modify
@@ -16,32 +15,8 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+mod enforce;
+mod tables;
 
-
-
-use crate::errors::{ServiceError, ServiceResult};
-use crate::RE_BLACKLIST;
-
-pub fn forbidden(target: &str) -> ServiceResult<()> {
-    if RE_BLACKLIST.is_match(&target) {
-        Err(ServiceError::CharError)
-    } else {
-        Ok(())
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_forbidden() {
-        let illegal = "zlib";
-        let legal = "rust";
-        let illegal2 = ".htaccess_yolo";
-
-        assert_eq!(forbidden(legal), Ok(()));
-        assert_eq!(forbidden(illegal), Err(ServiceError::CharError));
-        assert_eq!(forbidden(illegal2), Err(ServiceError::CharError));
-    }
-}
+pub use enforce::beep;
+pub use tables::PROFAINITY;

@@ -1,5 +1,4 @@
 /*
-* Wagon is an independent mailing list manager
 * Copyright (C) 2020  Aravinth Manivannan <realaravinth@batsense.net>
 *
 * This program is free software: you can redistribute it and/or modify
@@ -16,16 +15,8 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+mod handler;
+mod utils;
 
-
-
-use actix_session::Session;
-use actix_web::{HttpResponse, Responder};
-
-use super::utils::*;
-use crate::errors::*;
-
-pub async fn send_pow_config(session: Session) -> ServiceResult<impl Responder> {
-    let config = gen_pow(&session).await?;
-    Ok(HttpResponse::Ok().json(config))
-}
+pub(crate) use handler::send_pow_config;
+pub(crate) use utils::*;

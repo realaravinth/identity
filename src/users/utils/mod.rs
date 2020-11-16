@@ -1,5 +1,4 @@
 /*
-* Wagon is an independent mailing list manager
 * Copyright (C) 2020  Aravinth Manivannan <realaravinth@batsense.net>
 *
 * This program is free software: you can redistribute it and/or modify
@@ -16,11 +15,10 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+mod filters;
+mod hashify;
 
-
-
-pub(crate) mod hashify;
-pub(crate) mod utils;
-
-pub(crate) use hashify::*;
-pub(crate) use utils::*;
+pub use filters::{beep, PROFAINITY};
+pub use filters::{filter, USERNAME_CASE_MAPPED};
+pub use filters::{forbidden, BLACKLIST};
+pub use hashify::{create_hash, verify};

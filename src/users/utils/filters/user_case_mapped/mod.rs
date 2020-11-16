@@ -1,5 +1,4 @@
 /*
-* Wagon is an independent mailing list manager
 * Copyright (C) 2020  Aravinth Manivannan <realaravinth@batsense.net>
 *
 * This program is free software: you can redistribute it and/or modify
@@ -16,32 +15,8 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+mod enforce;
+mod tables;
 
-
-
-use crate::errors::{ServiceError, ServiceResult};
-use crate::RE_PROFAINITY;
-
-pub fn beep(target: &str) -> ServiceResult<()> {
-    if RE_PROFAINITY.is_match(&target) {
-        Err(ServiceError::CharError)
-    } else {
-        Ok(())
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn profainity_ture1() {
-        let illegal = "fuck";
-        let illegal2 = "pundapayale";
-
-        let legal = "hey";
-        assert_eq!(beep(legal), Ok(()));
-        assert_eq!(beep(illegal), Err(ServiceError::CharError));
-        assert_eq!(beep(illegal2), Err(ServiceError::CharError));
-    }
-}
+pub use enforce::filter;
+pub use tables::USERNAME_CASE_MAPPED;

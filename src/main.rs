@@ -1,5 +1,4 @@
 /*
-* Wagon is an independent mailing list manager
 * Copyright (C) 2020  Aravinth Manivannan <realaravinth@batsense.net>
 *
 * This program is free software: you can redistribute it and/or modify
@@ -15,8 +14,6 @@
 * You should have received a copy of the GNU Affero General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-
-
 
 extern crate actix;
 extern crate argon2;
@@ -48,18 +45,16 @@ use std::env;
 
 mod database;
 mod errors;
-mod pow;
 mod schema;
 mod settings;
 mod users;
 
-use crate::users::filters::blacklist::tables::BLACKLIST;
-use crate::users::filters::profainity::tables::PROFAINITY;
-use crate::users::filters::user_case_mapped::tables::USERNAME_CASE_MAPPED;
+use crate::users::BLACKLIST;
+use crate::users::PROFAINITY;
+use crate::users::USERNAME_CASE_MAPPED;
 
 use database::pool::get_connection_pool;
 use settings::Settings;
-use users::server;
 
 lazy_static! {
     pub static ref SETTINGS: Settings = Settings::new().expect("couldn't load settings");
@@ -104,7 +99,7 @@ async fn main() -> std::io::Result<()> {
                     .same_site(SameSite::Lax)
                     .secure(true),
             ))
-            .configure(server::config)
+            .configure(users::routes)
             .wrap(Logger::default())
             .data(database_connection_pool.clone())
     })

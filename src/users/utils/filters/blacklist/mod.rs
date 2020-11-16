@@ -1,5 +1,4 @@
 /*
-* Wagon is an independent mailing list manager
 * Copyright (C) 2020  Aravinth Manivannan <realaravinth@batsense.net>
 *
 * This program is free software: you can redistribute it and/or modify
@@ -16,8 +15,8 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+mod enforce;
+mod tables;
 
-
-
-pub mod enforce;
-pub mod tables;
+pub use enforce::forbidden;
+pub use tables::BLACKLIST;

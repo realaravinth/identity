@@ -1,5 +1,4 @@
 /*
-* Wagon is an independent mailing list manager
 * Copyright (C) 2020  Aravinth Manivannan <realaravinth@batsense.net>
 *
 * This program is free software: you can redistribute it and/or modify
@@ -16,18 +15,14 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-
-
-
 use actix_identity::Identity;
 use actix_session::Session;
 use actix_web::{web, HttpResponse, Responder};
 use futures;
 
-use super::create_new_user;
+use super::pow::verify_pow;
 use super::{Creds, NewCreds};
 use crate::errors::ServiceResult;
-use crate::pow::verify_pow;
 
 pub async fn sign_up(
     session: Session,
@@ -36,7 +31,7 @@ pub async fn sign_up(
     let new_creds = creds.into_inner();
     let pow = &new_creds.pow;
     verify_pow(&session, &pow).await?;
-    create_new_user(&new_creds.creds.username, &new_creds.creds.password).await?;
+    //    create_new_user(&new_creds.creds.username, &new_creds.creds.password).await?;
     Ok(HttpResponse::Ok()
         .set_header(actix_web::http::header::CONNECTION, "close")
         .finish())
