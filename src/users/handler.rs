@@ -18,9 +18,7 @@
 use actix_identity::Identity;
 use actix_session::Session;
 use actix_web::{web, HttpResponse, Responder};
-use futures;
 
-use super::pow::verify_pow;
 use super::{Creds, NewCreds};
 use crate::errors::ServiceResult;
 
@@ -28,6 +26,7 @@ pub async fn sign_up(
     session: Session,
     creds: web::Json<NewCreds>,
 ) -> ServiceResult<impl Responder> {
+    use super::utils::verify_pow;
     let new_creds = creds.into_inner();
     let pow = &new_creds.pow;
     verify_pow(&session, &pow).await?;
@@ -44,6 +43,12 @@ pub async fn sign_in(
 ) -> ServiceResult<impl Responder> {
     unimplemented!();
     Ok(HttpResponse::Ok().finish())
+}
+
+pub async fn send_pow_config(session: Session) -> ServiceResult<impl Responder> {
+    use super::utils::PoWConfig;
+    let config = PoWConfig::new(&session)?;
+    Ok(HttpResponse::Ok().json(config))
 }
 
 pub async fn sign_out(id: Identity) -> ServiceResult<impl Responder> {

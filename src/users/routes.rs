@@ -17,8 +17,7 @@
 
 use actix_web::web::{self, HttpResponse};
 
-use super::handler::{sign_in, sign_out, sign_up};
-use super::pow::send_pow_config;
+use super::handler::{send_pow_config, sign_in, sign_out, sign_up};
 
 #[cfg(not(tarpaulin_include))]
 pub fn routes(cfg: &mut web::ServiceConfig) {

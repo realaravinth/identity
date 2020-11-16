@@ -22,11 +22,37 @@ use crate::errors::{ServiceError, ServiceResult};
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
 
+pub static DIFFICULTY: u128 = u128::max_value() - u128::max_value() / 100_00000;
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct PoWConfig {
+    pub phrase: String,
+    pub difficulty: u128,
+}
+
+impl PoWConfig {
+    pub fn new(session: &Session) -> ServiceResult<PoWConfig> {
+        let session_id = session.get::<String>("PoW");
+        if let Some(_id) = session_id? {
+            Err(ServiceError::PoWRequired)
+        } else {
+            // TODO: Move difficulty into app state(?)
+            // ultimately, difficulty should be adjusted according to
+            // server load
+            let phrase: String = thread_rng().sample_iter(&Alphanumeric).take(32).collect();
+            session.set("PoW", &phrase)?;
+            Ok(PoWConfig {
+                difficulty: DIFFICULTY,
+                phrase,
+            })
+        }
+    }
+}
+
 pub async fn verify_pow(session: &Session, pow: &PoW<Vec<u8>>) -> ServiceResult<()> {
     let session_id = session.get::<String>("PoW")?;
     if let Some(id) = session_id {
-        let difficulty = u128::max_value() - u128::max_value() / 100_00000;
-        if pow.is_sufficient_difficulty(difficulty) && pow.is_valid_proof(&id.as_bytes().to_vec()) {
+        if pow.is_sufficient_difficulty(DIFFICULTY) && pow.is_valid_proof(&id.as_bytes().to_vec()) {
             Ok(())
         } else {
             Err(ServiceError::PoWRequired)
@@ -36,39 +62,14 @@ pub async fn verify_pow(session: &Session, pow: &PoW<Vec<u8>>) -> ServiceResult<
     }
 }
 
-pub async fn gen_pow(session: &Session) -> ServiceResult<PoWConfig> {
-    let session_id = session.get::<String>("PoW");
-    if let Some(_id) = session_id? {
-        Err(ServiceError::PoWRequired)
-    } else {
-        // TODO: Move difficulty into app state
-        let difficulty = u128::max_value() - u128::max_value() / 100_00000;
-        let phrase: String = thread_rng().sample_iter(&Alphanumeric).take(32).collect();
-        session.set("PoW", &phrase)?;
-        Ok(PoWConfig { difficulty, phrase })
-    }
-}
-
-#[derive(Debug, Clone, Serialize, PartialEq, Deserialize)]
-pub struct PoWResponse {
-    pub nonce: u64,
-    pub result: String,
-}
-
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
-pub struct PoWConfig {
-    pub phrase: String,
-    pub difficulty: u128,
-}
-
-#[cfg(tests)]
-mod tests {
-    use super::*;
-    use actix_session::Session;
-
-    #[actix_rt::test]
-    async fn test_gen_pow() {
-        let session = Session::new();
-        println!("{:?}", session);
-    }
-}
+//#[cfg(tests)]
+//mod tests {
+//    use super::*;
+//    use actix_session::Session;
+//
+//    #[actix_rt::test]
+//    async fn test_gen_pow() {
+//        let session = Session::new();
+//        println!("{:?}", session);
+//    }
+//}
