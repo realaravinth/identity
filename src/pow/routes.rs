@@ -15,9 +15,11 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-mod handlers;
-mod payload;
-mod routes;
+use actix_web::web::{self, HttpResponse};
 
-use super::{beep, create_hash, filter, forbidden, verify};
-pub use routes::routes;
+use super::handlers::send_pow_config;
+
+#[cfg(not(tarpaulin_include))]
+pub fn routes(cfg: &mut web::ServiceConfig) {
+    cfg.service(web::resource("/api/signup").route(web::get().to(send_pow_config)));
+}

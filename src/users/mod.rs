@@ -17,12 +17,14 @@
 
 mod utils;
 
-mod handler;
+mod handlers;
 mod models;
+mod registration;
 mod routes;
 
 use models::*;
 
+pub use registration::routes as registration_routes;
 pub use routes::routes;
 pub use utils::{beep, PROFAINITY};
 pub use utils::{create_hash, verify};

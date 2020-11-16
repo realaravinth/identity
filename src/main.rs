@@ -31,6 +31,9 @@ extern crate serde;
 extern crate serde_derive;
 #[macro_use]
 extern crate lazy_static;
+extern crate validator;
+#[macro_use]
+extern crate validator_derive;
 
 use actix_http::cookie::SameSite;
 use actix_identity::{CookieIdentityPolicy, IdentityService};
@@ -45,6 +48,8 @@ use std::env;
 
 mod database;
 mod errors;
+mod pow;
+mod routes;
 mod schema;
 mod settings;
 mod users;
@@ -54,6 +59,7 @@ use crate::users::PROFAINITY;
 use crate::users::USERNAME_CASE_MAPPED;
 
 use database::pool::get_connection_pool;
+use routes::routes;
 use settings::Settings;
 
 lazy_static! {
@@ -99,7 +105,7 @@ async fn main() -> std::io::Result<()> {
                     .same_site(SameSite::Lax)
                     .secure(true),
             ))
-            .configure(users::routes)
+            .configure(routes)
             .wrap(Logger::default())
             .data(database_connection_pool.clone())
     })

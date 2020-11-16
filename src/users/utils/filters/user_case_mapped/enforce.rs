@@ -33,7 +33,7 @@ pub fn filter(target: &str) -> ServiceResult<()> {
     if RE_USERNAME_CASE_MAPPED.is_match(target) {
         Ok(())
     } else {
-        Err(ServiceError::CharError)
+        Err(ServiceError::UsernameError)
     }
 }
 
@@ -45,6 +45,6 @@ mod tests {
         let legal = "\u{0065}";
         let illegal = "\u{0000}";
         assert_eq!(filter(legal), Ok(()));
-        assert_eq!(filter(illegal), Err(ServiceError::CharError));
+        assert_eq!(filter(illegal), Err(ServiceError::UsernameError));
     }
 }

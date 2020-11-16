@@ -15,21 +15,14 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-use actix_web::web::{self, HttpResponse};
+use actix_web::web;
 
-use super::handler::{send_pow_config, sign_in, sign_out, sign_up};
+use super::handlers::{sign_in, sign_out};
+use super::registration_routes;
 
 #[cfg(not(tarpaulin_include))]
 pub fn routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(
-        web::resource("/api/signin")
-            .route(web::post().to(sign_in))
-            .route(web::get().to(send_pow_config)),
-    );
-    cfg.service(
-        web::resource("/api/signup")
-            .route(web::post().to(sign_up))
-            .route(web::get().to(send_pow_config)),
-    );
+    cfg.service(web::resource("/api/signin").route(web::post().to(sign_in)));
     cfg.service(web::resource("/api/signout").route(web::post().to(sign_out)));
+    registration_routes(cfg);
 }

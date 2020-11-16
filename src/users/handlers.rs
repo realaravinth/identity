@@ -15,9 +15,26 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-mod handlers;
-mod payload;
-mod routes;
+use actix_identity::Identity;
+use actix_session::Session;
+use actix_web::{web, HttpResponse, Responder};
 
-use super::{beep, create_hash, filter, forbidden, verify};
-pub use routes::routes;
+use super::Creds;
+use crate::errors::ServiceResult;
+use crate::pow::{verify_pow, PoWConfig};
+
+pub async fn sign_in(
+    session: Session,
+    creds: web::Json<Creds>,
+    id: Identity,
+) -> ServiceResult<impl Responder> {
+    unimplemented!();
+    Ok(HttpResponse::Ok().finish())
+}
+
+pub async fn sign_out(id: Identity) -> ServiceResult<impl Responder> {
+    id.forget();
+    Ok(HttpResponse::Ok()
+        .content_type("text/html")
+        .body("You are successfully signed out"))
+}

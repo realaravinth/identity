@@ -15,9 +15,21 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-mod handlers;
-mod payload;
-mod routes;
+use super::{PoWConfig, DIFFICULTY};
+use crate::errors::*;
 
-use super::{beep, create_hash, filter, forbidden, verify};
-pub use routes::routes;
+use actix_session::Session;
+use pow_sha256::PoW;
+
+pub async fn verify_pow(session: &Session, pow: &PoW<Vec<u8>>) -> ServiceResult<()> {
+    let session_id = session.get::<String>("PoW")?;
+    if let Some(id) = session_id {
+        if pow.is_sufficient_difficulty(DIFFICULTY) && pow.is_valid_proof(&id.as_bytes().to_vec()) {
+            Ok(())
+        } else {
+            Err(ServiceError::PoWRequired)
+        }
+    } else {
+        Err(ServiceError::PoWRequired)
+    }
+}

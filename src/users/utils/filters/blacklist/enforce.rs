@@ -20,7 +20,7 @@ use crate::RE_BLACKLIST;
 
 pub fn forbidden(target: &str) -> ServiceResult<()> {
     if RE_BLACKLIST.is_match(&target) {
-        Err(ServiceError::CharError)
+        Err(ServiceError::UsernameError)
     } else {
         Ok(())
     }
@@ -37,7 +37,7 @@ mod tests {
         let illegal2 = ".htaccess_yolo";
 
         assert_eq!(forbidden(legal), Ok(()));
-        assert_eq!(forbidden(illegal), Err(ServiceError::CharError));
-        assert_eq!(forbidden(illegal2), Err(ServiceError::CharError));
+        assert_eq!(forbidden(illegal), Err(ServiceError::UsernameError));
+        assert_eq!(forbidden(illegal2), Err(ServiceError::UsernameError));
     }
 }

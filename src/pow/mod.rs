@@ -18,6 +18,10 @@
 mod handlers;
 mod payload;
 mod routes;
+mod verify;
 
-use super::{beep, create_hash, filter, forbidden, verify};
+pub static DIFFICULTY: u128 = u128::max_value() - u128::max_value() / 100_00000;
+
+pub use payload::PoWConfig;
 pub use routes::routes;
+pub use verify::verify_pow;

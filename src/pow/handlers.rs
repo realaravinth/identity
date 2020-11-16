@@ -14,10 +14,14 @@
 * You should have received a copy of the GNU Affero General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+use actix_session::Session;
+use actix_web::{HttpResponse, Responder};
+use pow_sha256::PoW;
 
-mod handlers;
-mod payload;
-mod routes;
+use super::PoWConfig;
+use crate::errors::*;
 
-use super::{beep, create_hash, filter, forbidden, verify};
-pub use routes::routes;
+pub async fn send_pow_config(session: Session) -> ServiceResult<impl Responder> {
+    let config = PoWConfig::new(&session)?;
+    Ok(HttpResponse::Ok().json(config))
+}

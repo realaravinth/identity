@@ -20,7 +20,7 @@ use crate::RE_PROFAINITY;
 
 pub fn beep(target: &str) -> ServiceResult<()> {
     if RE_PROFAINITY.is_match(&target) {
-        Err(ServiceError::CharError)
+        Err(ServiceError::UsernameError)
     } else {
         Ok(())
     }
@@ -37,7 +37,7 @@ mod tests {
 
         let legal = "hey";
         assert_eq!(beep(legal), Ok(()));
-        assert_eq!(beep(illegal), Err(ServiceError::CharError));
-        assert_eq!(beep(illegal2), Err(ServiceError::CharError));
+        assert_eq!(beep(illegal), Err(ServiceError::UsernameError));
+        assert_eq!(beep(illegal2), Err(ServiceError::UsernameError));
     }
 }

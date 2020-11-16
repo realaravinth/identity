@@ -20,6 +20,7 @@ use actix_web::{error::ResponseError, http::header, http::StatusCode, HttpRespon
 use diesel::result::Error as DBError;
 use failure::Fail;
 use serde::{Deserialize, Serialize};
+use validator::ValidationErrors;
 
 use std::convert::From;
 
@@ -27,7 +28,7 @@ use std::convert::From;
 #[cfg(not(tarpaulin_include))]
 pub enum ServiceError {
     #[fail(display = "some characters are not permitted")] //405j
-    CharError,
+    UsernameError,
     #[fail(display = "username exists")] //405
     UsernameExists,
     #[fail(display = "invalid credentials")]
@@ -42,6 +43,8 @@ pub enum ServiceError {
     UnableToConnectToDb,
     #[fail(display = "PoW required, request not processed")]
     PoWRequired,
+    #[fail(display = "The value you entered for email is not an email")] //405j
+    NotAnEmail,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -61,7 +64,7 @@ impl ResponseError for ServiceError {
 
     fn status_code(&self) -> StatusCode {
         match *self {
-            ServiceError::CharError => StatusCode::METHOD_NOT_ALLOWED,
+            ServiceError::UsernameError => StatusCode::METHOD_NOT_ALLOWED,
             ServiceError::UsernameExists => StatusCode::METHOD_NOT_ALLOWED,
             ServiceError::AuthorizationRequired => StatusCode::UNAUTHORIZED,
             ServiceError::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
@@ -69,6 +72,7 @@ impl ResponseError for ServiceError {
             ServiceError::Timeout => StatusCode::GATEWAY_TIMEOUT,
             ServiceError::UnableToConnectToDb => StatusCode::INTERNAL_SERVER_ERROR,
             ServiceError::PoWRequired => StatusCode::PAYMENT_REQUIRED,
+            ServiceError::NotAnEmail => StatusCode::BAD_REQUEST,
         }
     }
 }
@@ -93,6 +97,12 @@ impl From<actix_http::Error> for ServiceError {
 impl From<argon2::Error> for ServiceError {
     fn from(error: argon2::Error) -> ServiceError {
         ServiceError::InternalServerError
+    }
+}
+
+impl From<ValidationErrors> for ServiceError {
+    fn from(_: ValidationErrors) -> ServiceError {
+        ServiceError::NotAnEmail
     }
 }
 

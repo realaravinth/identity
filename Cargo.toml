@@ -31,3 +31,5 @@ unicode-normalization = "0.1.13"
 regex = { version = "1.3.9", features = [ "perf-inline", "perf-dfa", "perf-literal", "perf-cache", "perf"]}
 pow_sha256 = "0.2.1"
 futures = "*"
+validator = "0.10"
+validator_derive = "0.10"

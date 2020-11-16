@@ -15,9 +15,14 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-mod handlers;
-mod payload;
-mod routes;
+use actix_web::web::ServiceConfig;
 
-use super::{beep, create_hash, filter, forbidden, verify};
-pub use routes::routes;
+use crate::users::routes as users;
+
+use crate::pow::routes as pow;
+
+#[cfg(not(tarpaulin_include))]
+pub fn routes(cfg: &mut ServiceConfig) {
+    users(cfg);
+    pow(cfg);
+}

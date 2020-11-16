@@ -17,12 +17,10 @@
 
 use pow_sha256::PoW;
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 
 #[derive(Debug, PartialEq, Deserialize, Serialize, Queryable)]
 pub struct User {
     pub username: String,
-    pub user_uuid: Uuid,
     pub hash: String,
     pub email: String,
     pub role: String,
@@ -32,7 +30,6 @@ pub struct User {
 #[derive(Debug, PartialEq, Deserialize, Serialize, Queryable)]
 pub struct InsertableCreds {
     pub username: String,
-    pub user_uuid: Uuid,
     pub hash: String,
     pub email: Option<String>,
     pub role: String,
@@ -51,22 +48,13 @@ pub struct Creds {
 //    pub hash: String,
 //}
 
-#[derive(Deserialize, Serialize, Debug, PartialEq)]
-pub struct NewCreds {
-    pub creds: Creds,
-    pub email: Option<String>,
-    pub pow: PoW<Vec<u8>>,
-}
-
 impl InsertableCreds {
     pub fn default(username: String, hash: String) -> Self {
         let name = username.clone();
-        let user_uuid = Uuid::new_v4();
         let email = None;
         let role = "user".to_string();
         InsertableCreds {
             username,
-            user_uuid,
             hash,
             email,
             role,
