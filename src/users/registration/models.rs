@@ -20,7 +20,7 @@ use tokio_pg_mapper_derive::PostgresMapper;
 
 use super::payload::RegisterCreds;
 
-#[derive(Deserialize, Serialize, PostgresMapper)]
+#[derive(Debug, Deserialize, Serialize, PostgresMapper)]
 #[pg_mapper(table = "users")]
 pub struct User {
     pub username: String,
@@ -37,3 +37,8 @@ impl From<RegisterCreds> for User {
         }
     }
 }
+
+//impl User{
+//    pub fn insert() -> ServiceResult<User> {
+//    }
+//}

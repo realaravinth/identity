@@ -18,6 +18,7 @@ use actix_identity::Identity;
 use actix_session::Session;
 use actix_web::{web, HttpResponse, Responder};
 
+use super::models::User;
 use super::payload::Unvalidated_RegisterCreds;
 use crate::errors::*;
 use crate::pow::verify_pow;
@@ -27,7 +28,8 @@ pub async fn sign_up(
     creds: web::Json<Unvalidated_RegisterCreds>,
 ) -> ServiceResult<impl Responder> {
     verify_pow(&session, &creds.pow).await?;
-    let processed_creds = creds.process()?;
+    let processed_creds: User = creds.process()?.into();
+    debug!("{:?}", processed_creds);
     Ok(HttpResponse::Ok()
         .set_header(actix_web::http::header::CONNECTION, "close")
         .finish())

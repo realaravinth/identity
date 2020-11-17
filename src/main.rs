@@ -60,7 +60,7 @@ use crate::users::BLACKLIST;
 use crate::users::PROFAINITY;
 use crate::users::USERNAME_CASE_MAPPED;
 
-//use database::pool::get_connection_pool;
+use database::get_connection_pool;
 use routes::routes;
 use settings::Settings;
 
@@ -78,7 +78,7 @@ lazy_static! {
 async fn main() -> std::io::Result<()> {
     let cookie_secret = &SETTINGS.server.cookie_secret;
 
-    //    let database_connection_pool = get_connection_pool(&SETTINGS.database.url);
+    let database_connection_pool = get_connection_pool();
 
     pretty_env_logger::init();
     HttpServer::new(move || {

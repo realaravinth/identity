@@ -15,4 +15,6 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-//pub mod pool;
+mod pool;
+
+pub use pool::get_connection_pool;

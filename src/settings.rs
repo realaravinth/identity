@@ -50,6 +50,23 @@ pub struct Database {
     pub url: String,
 }
 
+impl From<Database> for deadpool_postgres::Config {
+    fn from(config: Database) -> Self {
+        let pool = Some(deadpool::managed::PoolConfig::new(config.pool as usize));
+        let deadpool_postgres_config = deadpool_postgres::Config::new();
+        deadpool_postgres::Config {
+            user: Some(config.username),
+            password: Some(config.password),
+            port: Some(config.port as u16),
+            dbname: Some(config.name),
+            host: Some(config.hostname),
+            pool,
+            ..deadpool_postgres_config
+        }
+        .to_owned()
+    }
+}
+
 #[derive(Debug, Clone, Deserialize)]
 pub struct Settings {
     pub debug: bool,

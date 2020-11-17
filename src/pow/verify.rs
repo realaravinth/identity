@@ -27,7 +27,7 @@ pub async fn verify_pow(session: &Session, pow: &PoW<Vec<u8>>) -> ServiceResult<
         if pow.is_sufficient_difficulty(DIFFICULTY) && pow.is_valid_proof(&id.as_bytes().to_vec()) {
             Ok(())
         } else {
-            Err(ServiceError::PoWRequired)
+            Err(ServiceError::PoWInvalid)
         }
     } else {
         Err(ServiceError::PoWRequired)

@@ -21,6 +21,7 @@ use failure::Fail;
 use serde::{Deserialize, Serialize};
 use tokio_pg_mapper::Error as PGMError;
 use tokio_postgres::error::Error as PGError;
+use tokio_postgres::error::SqlState as PGBError;
 use validator::ValidationErrors;
 
 use std::convert::From;
@@ -44,6 +45,8 @@ pub enum ServiceError {
     UnableToConnectToDb,
     #[fail(display = "PoW required, request not processed")]
     PoWRequired,
+    #[fail(display = "PoW submitted is incorrect")]
+    PoWInvalid,
     #[fail(display = "The value you entered for email is not an email")] //405j
     NotAnEmail,
     #[fail(display = "Account Doesn't exist")]
@@ -75,6 +78,7 @@ impl ResponseError for ServiceError {
             ServiceError::Timeout => StatusCode::GATEWAY_TIMEOUT,
             ServiceError::UnableToConnectToDb => StatusCode::INTERNAL_SERVER_ERROR,
             ServiceError::PoWRequired => StatusCode::PAYMENT_REQUIRED,
+            ServiceError::PoWInvalid => StatusCode::BAD_REQUEST,
             ServiceError::NotAnEmail => StatusCode::BAD_REQUEST,
             ServiceError::AccountDoesntExist => StatusCode::BAD_REQUEST,
         }
@@ -94,6 +98,18 @@ impl From<PGError> for ServiceError {
         // Right now we just care about UniqueViolation from diesel
         // But this would be helpful to easily map errors as our app grows
         ServiceError::InternalServerError
+    }
+}
+
+impl From<PGBError> for ServiceError {
+    fn from(error: PGBError) -> ServiceError {
+        // Right now we just care about UniqueViolation from diesel
+        // But this would be helpful to easily map errors as our app grows
+        if error == PGBError::UNIQUE_VIOLATION {
+            ServiceError::UsernameExists
+        } else {
+            ServiceError::InternalServerError
+        }
     }
 }
 
