@@ -15,11 +15,33 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-mod actions;
-mod handlers;
-mod models;
-mod payload;
-mod routes;
+use ammonia::clean;
+use argon2::verify_encoded;
+use derive_more::AsRef;
+use pow_sha256::PoW;
+use rand::distributions::Alphanumeric;
+use rand::{thread_rng, Rng};
+use serde::{Deserialize, Serialize};
+use unicode_normalization::UnicodeNormalization;
+use validator::Validate;
+use validator_derive::Validate;
 
 use super::{beep, filter, forbidden, verify};
-pub use routes::routes;
+use crate::errors::*;
+use crate::SETTINGS;
+
+#[derive(Debug, Default, Clone, PartialEq, Deserialize, Serialize)]
+pub struct LoginCreds {
+    pub username: String,
+    pub password: String,
+}
+
+//impl LoginCreds {
+//    fn verify(&self) -> ServiceResult<()> {
+//        if verify_encoded(&hash, password.as_bytes())? {
+//            Ok(())
+//        } else {
+//            Err(ServiceError::AuthorizationRequired)
+//        }
+//    }
+//}

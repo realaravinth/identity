@@ -36,7 +36,7 @@ pub struct Server {
     pub host: String,
     pub domain: String,
     pub cookie_secret: String,
-    pub profainity_filter: bool,
+    pub profanity_filter: bool,
 }
 
 #[derive(Debug, Clone, Deserialize)]

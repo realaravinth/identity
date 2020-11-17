@@ -15,20 +15,12 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-mod utils;
+use actix_web::web;
 
-mod authentication;
-mod handlers;
-mod models;
-mod registration;
-mod routes;
+use super::handlers::*;
 
-use models::*;
-
-use authentication::routes as authentication_routes;
-use registration::routes as registration_routes;
-pub use routes::routes;
-pub use utils::verify;
-pub use utils::{beep, PROFAINITY};
-pub use utils::{filter, USERNAME_CASE_MAPPED};
-pub use utils::{forbidden, BLACKLIST};
+#[cfg(not(tarpaulin_include))]
+pub fn routes(cfg: &mut web::ServiceConfig) {
+    cfg.service(web::resource("/api/signin").route(web::post().to(sign_in)));
+    cfg.service(web::resource("/api/signout").route(web::post().to(sign_out)));
+}

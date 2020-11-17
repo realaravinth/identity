@@ -17,7 +17,6 @@
 
 use ammonia::clean;
 use argon2::{self, Config, ThreadMode, Variant, Version};
-use derive_more::AsRef;
 use pow_sha256::PoW;
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
@@ -42,7 +41,7 @@ pub struct Unvalidated_RegisterCreds {
 pub struct RegisterCreds {
     pub username: String,
     #[validate(email)]
-    pub email_id: String,
+    pub email_id: Option<String>,
     pub password: String,
 }
 //impl AsRef<RegisterCreds> for RegisterCreds {
@@ -95,7 +94,7 @@ impl RegisterCreds {
 
     fn set_email<'a>(&'a mut self, email_id: &Option<String>) -> ServiceResult<&'a mut Self> {
         if let Some(email) = email_id {
-            self.email_id = email.trim().to_owned();
+            self.email_id = Some(email.trim().to_owned());
             self.validate()?;
         }
         Ok(self)
@@ -148,7 +147,7 @@ mod tests {
             .build();
 
         assert_eq!(registered_creds.username, "realaravinth");
-        assert_eq!(registered_creds.email_id, "batman@we.net");
+        assert_eq!(registered_creds.email_id, Some("batman@we.net".into()));
     }
 
     #[test]

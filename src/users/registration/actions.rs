@@ -15,20 +15,10 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-mod utils;
-
-mod authentication;
-mod handlers;
-mod models;
-mod registration;
-mod routes;
-
-use models::*;
-
-use authentication::routes as authentication_routes;
-use registration::routes as registration_routes;
-pub use routes::routes;
-pub use utils::verify;
-pub use utils::{beep, PROFAINITY};
-pub use utils::{filter, USERNAME_CASE_MAPPED};
-pub use utils::{forbidden, BLACKLIST};
+pub fn init_add_user() -> String {
+    use super::models::User;
+    use tokio_pg_mapper::FromTokioPostgresRow;
+    let statement = include_str!("./add_user.sql");
+    let statement = statement.replace("$table_fields", &User::sql_table_fields());
+    statement
+}

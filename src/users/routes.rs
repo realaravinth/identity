@@ -17,12 +17,10 @@
 
 use actix_web::web;
 
-use super::handlers::{sign_in, sign_out};
-use super::registration_routes;
+use super::{authentication_routes, registration_routes};
 
 #[cfg(not(tarpaulin_include))]
 pub fn routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(web::resource("/api/signin").route(web::post().to(sign_in)));
-    cfg.service(web::resource("/api/signout").route(web::post().to(sign_out)));
     registration_routes(cfg);
+    authentication_routes(cfg);
 }

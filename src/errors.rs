@@ -17,9 +17,10 @@
 
 use actix_http::ResponseBuilder;
 use actix_web::{error::ResponseError, http::header, http::StatusCode, HttpResponse};
-use diesel::result::Error as DBError;
 use failure::Fail;
 use serde::{Deserialize, Serialize};
+use tokio_pg_mapper::Error as PGMError;
+use tokio_postgres::error::Error as PGError;
 use validator::ValidationErrors;
 
 use std::convert::From;
@@ -45,6 +46,8 @@ pub enum ServiceError {
     PoWRequired,
     #[fail(display = "The value you entered for email is not an email")] //405j
     NotAnEmail,
+    #[fail(display = "Account Doesn't exist")]
+    AccountDoesntExist,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -73,18 +76,24 @@ impl ResponseError for ServiceError {
             ServiceError::UnableToConnectToDb => StatusCode::INTERNAL_SERVER_ERROR,
             ServiceError::PoWRequired => StatusCode::PAYMENT_REQUIRED,
             ServiceError::NotAnEmail => StatusCode::BAD_REQUEST,
+            ServiceError::AccountDoesntExist => StatusCode::BAD_REQUEST,
         }
     }
 }
 
-impl From<DBError> for ServiceError {
-    fn from(error: DBError) -> ServiceError {
+impl From<PGMError> for ServiceError {
+    fn from(error: PGMError) -> ServiceError {
         // Right now we just care about UniqueViolation from diesel
         // But this would be helpful to easily map errors as our app grows
-        match error {
-            DBError::DatabaseError(_kind, _info) => ServiceError::BadRequest,
-            _ => ServiceError::InternalServerError,
-        }
+        ServiceError::InternalServerError
+    }
+}
+
+impl From<PGError> for ServiceError {
+    fn from(error: PGError) -> ServiceError {
+        // Right now we just care about UniqueViolation from diesel
+        // But this would be helpful to easily map errors as our app grows
+        ServiceError::InternalServerError
     }
 }
 

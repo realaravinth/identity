@@ -15,20 +15,9 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-mod utils;
-
-mod authentication;
 mod handlers;
-mod models;
-mod registration;
+mod payload;
 mod routes;
 
-use models::*;
-
-use authentication::routes as authentication_routes;
-use registration::routes as registration_routes;
+use super::{beep, filter, forbidden, verify};
 pub use routes::routes;
-pub use utils::verify;
-pub use utils::{beep, PROFAINITY};
-pub use utils::{filter, USERNAME_CASE_MAPPED};
-pub use utils::{forbidden, BLACKLIST};

@@ -15,20 +15,25 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-mod utils;
+use serde::{Deserialize, Serialize};
+use tokio_pg_mapper_derive::PostgresMapper;
 
-mod authentication;
-mod handlers;
-mod models;
-mod registration;
-mod routes;
+use super::payload::RegisterCreds;
 
-use models::*;
+#[derive(Deserialize, Serialize, PostgresMapper)]
+#[pg_mapper(table = "users")]
+pub struct User {
+    pub username: String,
+    pub email_id: Option<String>,
+    pub password: String,
+}
 
-use authentication::routes as authentication_routes;
-use registration::routes as registration_routes;
-pub use routes::routes;
-pub use utils::verify;
-pub use utils::{beep, PROFAINITY};
-pub use utils::{filter, USERNAME_CASE_MAPPED};
-pub use utils::{forbidden, BLACKLIST};
+impl From<RegisterCreds> for User {
+    fn from(creds: RegisterCreds) -> Self {
+        User {
+            username: creds.username,
+            email_id: creds.email_id,
+            password: creds.password,
+        }
+    }
+}

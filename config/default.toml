@@ -27,7 +27,7 @@ host= "0.0.0.0"
 domain = "localhost"
 allow_registration = true
 # when true, usernames containing unparliamentary words are filtered out
-profainity_filter = true
+profanity_filter = true
 
 
 

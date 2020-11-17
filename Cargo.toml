@@ -21,10 +21,7 @@ serde = "1.0.114"
 serde_derive = "1.0.114"
 rust-argon2 = "0.8.2"
 failure = "0.1.8"
-diesel = { version = "1.4", features = ["postgres", "uuidv07", "chrono", "r2d2"] }
 uuid = { version = "0.8", features = ["serde", "v4"] }
-r2d2 = "0.8.9"
-tokio = { version = "0.2", features = ["full"] }
 config = "0.9"
 lazy_static = "1.4.0"
 num_cpus = "1.13.0"
@@ -37,3 +34,6 @@ validator_derive = "0.10"
 ammonia="3"
 url = "2"
 derive_more = "0.99"
+tokio-pg-mapper = "0.1.8"
+tokio-pg-mapper-derive = "0.1.5"
+tokio-postgres = "0.5"

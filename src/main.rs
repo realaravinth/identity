@@ -27,7 +27,6 @@ extern crate regex;
 extern crate unicode_normalization;
 extern crate uuid;
 #[macro_use]
-extern crate diesel;
 extern crate num_cpus;
 extern crate serde;
 #[macro_use]
@@ -54,7 +53,6 @@ mod database;
 mod errors;
 mod pow;
 mod routes;
-mod schema;
 mod settings;
 mod users;
 
@@ -62,7 +60,7 @@ use crate::users::BLACKLIST;
 use crate::users::PROFAINITY;
 use crate::users::USERNAME_CASE_MAPPED;
 
-use database::pool::get_connection_pool;
+//use database::pool::get_connection_pool;
 use routes::routes;
 use settings::Settings;
 
@@ -80,7 +78,7 @@ lazy_static! {
 async fn main() -> std::io::Result<()> {
     let cookie_secret = &SETTINGS.server.cookie_secret;
 
-    let database_connection_pool = get_connection_pool(&SETTINGS.database.url);
+    //    let database_connection_pool = get_connection_pool(&SETTINGS.database.url);
 
     pretty_env_logger::init();
     HttpServer::new(move || {
@@ -113,7 +111,7 @@ async fn main() -> std::io::Result<()> {
             ))
             .configure(routes)
             .wrap(Logger::default())
-            .data(database_connection_pool.clone())
+        //           .data(database_connection_pool.clone())
     })
     .bind(format!(
         "{}:{}",
