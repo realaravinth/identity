@@ -21,4 +21,4 @@ mod hashify;
 pub use filters::{beep, PROFAINITY};
 pub use filters::{filter, USERNAME_CASE_MAPPED};
 pub use filters::{forbidden, BLACKLIST};
-pub use hashify::{create_hash, verify};
+pub use hashify::verify;

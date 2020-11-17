@@ -21,5 +21,5 @@ use super::handlers::send_pow_config;
 
 #[cfg(not(tarpaulin_include))]
 pub fn routes(cfg: &mut web::ServiceConfig) {
-    cfg.service(web::resource("/api/signup").route(web::get().to(send_pow_config)));
+    cfg.service(web::resource("/api/pow").route(web::get().to(send_pow_config)));
 }

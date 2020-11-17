@@ -15,6 +15,10 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#![warn(rust_2018_idioms, elided_lifetimes_in_paths)]
+use pretty_env_logger;
+#[macro_use]
+extern crate log;
 extern crate actix;
 extern crate argon2;
 extern crate config;
@@ -24,7 +28,6 @@ extern crate unicode_normalization;
 extern crate uuid;
 #[macro_use]
 extern crate diesel;
-extern crate env_logger;
 extern crate num_cpus;
 extern crate serde;
 #[macro_use]
@@ -35,12 +38,13 @@ extern crate validator;
 #[macro_use]
 extern crate validator_derive;
 
-use actix_http::cookie::SameSite;
 use actix_identity::{CookieIdentityPolicy, IdentityService};
 use actix_session::CookieSession;
 use actix_web::{
+    error::InternalError,
+    http::StatusCode,
     middleware::{Compress, Logger},
-    App, HttpServer,
+    web, App, HttpServer,
 };
 
 use regex::Regex;
@@ -78,11 +82,14 @@ async fn main() -> std::io::Result<()> {
 
     let database_connection_pool = get_connection_pool(&SETTINGS.database.url);
 
-    env::set_var("RUST_LOG", "actix_web=info");
-    env_logger::init();
+    pretty_env_logger::init();
     HttpServer::new(move || {
         App::new()
             .wrap(Compress::default())
+            .app_data(web::JsonConfig::default().error_handler(|err, _| {
+                debug!("JSON deserialization error: {:?}", &err);
+                InternalError::new(err, StatusCode::BAD_REQUEST).into()
+            }))
             .wrap(
                 CookieSession::signed(&cookie_secret.as_bytes())
                     .domain(&SETTINGS.server.domain)
@@ -102,7 +109,6 @@ async fn main() -> std::io::Result<()> {
                     .name("Authorization")
                     .max_age(20)
                     .domain(&SETTINGS.server.domain)
-                    .same_site(SameSite::Lax)
                     .secure(true),
             ))
             .configure(routes)

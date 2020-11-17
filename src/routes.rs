@@ -23,6 +23,6 @@ use crate::pow::routes as pow;
 
 #[cfg(not(tarpaulin_include))]
 pub fn routes(cfg: &mut ServiceConfig) {
-    users(cfg);
     pow(cfg);
+    users(cfg);
 }

@@ -15,14 +15,18 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+use argon2::{self, Config, ThreadMode, Variant, Version};
 use pow_sha256::PoW;
+use rand::distributions::Alphanumeric;
+use rand::{thread_rng, Rng};
 use serde::{Deserialize, Serialize};
 use unicode_normalization::UnicodeNormalization;
 use validator::Validate;
 use validator_derive::Validate;
 
-use super::{beep, create_hash, filter, forbidden, verify};
+use super::{beep, filter, forbidden, verify};
 use crate::errors::*;
+use crate::SETTINGS;
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct Unvalidated_RegisterCreds {
@@ -93,7 +97,20 @@ impl RegisterCreds {
     }
 
     fn set_password<'a>(&'a mut self, password: &str) -> ServiceResult<&'a mut Self> {
-        self.password = create_hash(&password)?;
+        let config = Config {
+            variant: Variant::Argon2i,
+            version: Version::Version13,
+            mem_cost: SETTINGS.password_difficulty.mem_cost,
+            time_cost: SETTINGS.password_difficulty.time_cost,
+            lanes: SETTINGS.password_difficulty.lanes,
+            thread_mode: ThreadMode::Parallel,
+            secret: &[],
+            ad: &[],
+            hash_length: 32,
+        };
+
+        let salt: String = thread_rng().sample_iter(&Alphanumeric).take(32).collect();
+        self.password = argon2::hash_encoded(password.as_bytes(), salt.as_bytes(), &config)?;
         Ok(self)
     }
 
@@ -137,17 +154,23 @@ mod tests {
 
     #[test]
     fn utils_create_new_organisation() {
+        let password = "somepassword";
         let org = RegisterCreds::new()
             .set_email(&Some("batman@we.net".into()))
             .unwrap()
             .set_username("Realaravinth")
             .validate_fields()
             .unwrap()
-            .set_password("adfdfs")
+            .set_password(password)
             .unwrap()
             .build();
 
         assert_eq!(org.username, "realaravinth");
+
+        assert!(
+            argon2::verify_encoded(&org.password, password.as_bytes()).unwrap(),
+            "verify hahsing"
+        );
     }
 
     #[test]

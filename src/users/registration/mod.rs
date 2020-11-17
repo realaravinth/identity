@@ -19,5 +19,5 @@ mod handlers;
 mod payload;
 mod routes;
 
-use super::{beep, create_hash, filter, forbidden, verify};
+use super::{beep, filter, forbidden, verify};
 pub use routes::routes;

@@ -26,7 +26,7 @@ use models::*;
 
 pub use registration::routes as registration_routes;
 pub use routes::routes;
+pub use utils::verify;
 pub use utils::{beep, PROFAINITY};
-pub use utils::{create_hash, verify};
 pub use utils::{filter, USERNAME_CASE_MAPPED};
 pub use utils::{forbidden, BLACKLIST};

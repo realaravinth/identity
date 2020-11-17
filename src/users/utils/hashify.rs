@@ -56,12 +56,12 @@ mod tests {
 
     use super::*;
 
-    #[test]
-    fn test_crate_hash() {
-        let password = "somepassword";
-        let hash = create_hash(&password).unwrap();
-        assert!(argon2::verify_encoded(&hash, password.as_bytes()).unwrap());
-    }
+    //#[test]
+    //fn test_crate_hash() {
+    //    let password = "somepassword";
+    //    let hash = create_hash(&password).unwrap();
+    //    assert!(argon2::verify_encoded(&hash, password.as_bytes()).unwrap());
+    //}
 
     #[test]
     fn test_verify() {
