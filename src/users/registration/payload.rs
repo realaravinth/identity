@@ -15,7 +15,9 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+use ammonia::clean;
 use argon2::{self, Config, ThreadMode, Variant, Version};
+use derive_more::AsRef;
 use pow_sha256::PoW;
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
@@ -43,7 +45,17 @@ pub struct RegisterCreds {
     pub email_id: String,
     pub password: String,
 }
-
+//impl AsRef<RegisterCreds> for RegisterCreds {
+//    fn as_ref(&self) -> &RegisterCreds {
+//        &self
+//    }
+//}
+//
+//impl AsMut<RegisterCreds> for RegisterCreds {
+//    fn as_mut<'a>(&'a mut self) -> &'a mut Self {
+//        &mut self
+//    }
+//}
 impl Unvalidated_RegisterCreds {
     pub fn process(&self) -> ServiceResult<RegisterCreds> {
         let creds = RegisterCreds::new()
@@ -72,7 +84,7 @@ impl RegisterCreds {
     }
 
     fn set_username<'a>(&'a mut self, username: &str) -> &'a mut Self {
-        self.username = username
+        self.username = clean(username)
             .to_lowercase()
             .nfc()
             .collect::<String>()

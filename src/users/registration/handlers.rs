@@ -26,10 +26,8 @@ pub async fn sign_up(
     session: Session,
     creds: web::Json<Unvalidated_RegisterCreds>,
 ) -> ServiceResult<impl Responder> {
-    let new_creds = creds.into_inner();
-    let pow = &new_creds.pow;
-    verify_pow(&session, &pow).await?;
-    //    create_new_user(&new_creds.creds.username, &new_creds.creds.password).await?;
+    verify_pow(&session, &creds.pow).await?;
+    let processed_creds = creds.process()?;
     Ok(HttpResponse::Ok()
         .set_header(actix_web::http::header::CONNECTION, "close")
         .finish())

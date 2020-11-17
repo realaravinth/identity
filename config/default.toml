@@ -11,7 +11,7 @@ hostname = "localhost"
 port = "5432"
 username = "aravinth"
 password = ""
-database_name = "authdevel"
+name = "authdevel"
 
 [server]
 # This section deals with the configuration of the actual server
