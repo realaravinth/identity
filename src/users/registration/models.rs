@@ -15,10 +15,15 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+use deadpool_postgres::{Client, Pool};
 use serde::{Deserialize, Serialize};
+use tokio_pg_mapper::FromTokioPostgresRow;
 use tokio_pg_mapper_derive::PostgresMapper;
 
+use actix_web::{web, HttpResponse, Responder};
+
 use super::payload::RegisterCreds;
+use crate::errors::*;
 
 #[derive(Debug, Deserialize, Serialize, PostgresMapper)]
 #[pg_mapper(table = "users")]
@@ -38,7 +43,22 @@ impl From<RegisterCreds> for User {
     }
 }
 
-//impl User{
-//    pub fn insert() -> ServiceResult<User> {
-//    }
-//}
+impl User {
+    pub async fn add_user(&self, db_pool: web::Data<Pool>) -> ServiceResult<User> {
+        let statement = include_str!("./add_user.sql");
+        let statement = statement.replace("$table_fields", &User::sql_table_fields());
+
+        let client: Client = db_pool.get().await?;
+        let command = client.prepare(&statement).await?;
+
+        let new_user = client
+            .query(&command, &[&self.username, &self.email_id, &self.password])
+            .await?
+            .iter()
+            .map(|row| User::from_row_ref(row).unwrap())
+            .collect::<Vec<User>>()
+            .pop()
+            .unwrap();
+        Ok(new_user)
+    }
+}

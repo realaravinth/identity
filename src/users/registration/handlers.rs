@@ -17,6 +17,7 @@
 use actix_identity::Identity;
 use actix_session::Session;
 use actix_web::{web, HttpResponse, Responder};
+use deadpool_postgres::{Client, Pool};
 
 use super::models::User;
 use super::payload::Unvalidated_RegisterCreds;
@@ -26,10 +27,12 @@ use crate::pow::verify_pow;
 pub async fn sign_up(
     session: Session,
     creds: web::Json<Unvalidated_RegisterCreds>,
+    db_pool: web::Data<Pool>,
 ) -> ServiceResult<impl Responder> {
     verify_pow(&session, &creds.pow).await?;
     let processed_creds: User = creds.process()?.into();
-    debug!("{:?}", processed_creds);
+    let new_user = processed_creds.add_user(db_pool).await?;
+    debug!("{:?}", new_user);
     Ok(HttpResponse::Ok()
         .set_header(actix_web::http::header::CONNECTION, "close")
         .finish())

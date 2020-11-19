@@ -111,7 +111,7 @@ async fn main() -> std::io::Result<()> {
             ))
             .configure(routes)
             .wrap(Logger::default())
-        //           .data(database_connection_pool.clone())
+            .data(database_connection_pool.clone())
     })
     .bind(format!(
         "{}:{}",

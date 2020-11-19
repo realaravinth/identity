@@ -14,11 +14,3 @@
 * You should have received a copy of the GNU Affero General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-
-pub fn init_add_user() -> String {
-    use super::models::User;
-    use tokio_pg_mapper::FromTokioPostgresRow;
-    let statement = include_str!("./add_user.sql");
-    let statement = statement.replace("$table_fields", &User::sql_table_fields());
-    statement
-}

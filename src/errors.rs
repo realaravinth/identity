@@ -119,6 +119,18 @@ impl From<actix_http::Error> for ServiceError {
     }
 }
 
+impl From<deadpool_postgres::PoolError> for ServiceError {
+    fn from(error: deadpool_postgres::PoolError) -> ServiceError {
+        ServiceError::InternalServerError
+    }
+}
+
+//impl From<deadpool_postgres::PoolError<PGError>> for ServiceError {
+//    fn from(error: deadpool_postgres::PoolError<PGError>) -> ServiceError {
+//        ServiceError::InternalServerError
+//    }
+//}
+
 impl From<argon2::Error> for ServiceError {
     fn from(error: argon2::Error) -> ServiceError {
         ServiceError::InternalServerError
