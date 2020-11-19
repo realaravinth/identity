@@ -93,20 +93,26 @@ impl From<PGMError> for ServiceError {
     }
 }
 
-impl From<PGError> for ServiceError {
-    fn from(error: PGError) -> ServiceError {
-        // Right now we just care about UniqueViolation from diesel
-        // But this would be helpful to easily map errors as our app grows
-        ServiceError::InternalServerError
-    }
-}
-
 impl From<PGBError> for ServiceError {
     fn from(error: PGBError) -> ServiceError {
         // Right now we just care about UniqueViolation from diesel
         // But this would be helpful to easily map errors as our app grows
         if error == PGBError::UNIQUE_VIOLATION {
             ServiceError::UsernameExists
+        } else {
+            ServiceError::InternalServerError
+        }
+    }
+}
+
+impl From<PGError> for ServiceError {
+    fn from(error: PGError) -> ServiceError {
+        if let Some(e) = error.code() {
+            if e == &PGBError::UNIQUE_VIOLATION {
+                ServiceError::UsernameExists
+            } else {
+                ServiceError::InternalServerError
+            }
         } else {
             ServiceError::InternalServerError
         }

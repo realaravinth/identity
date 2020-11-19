@@ -23,5 +23,6 @@ use crate::errors::*;
 
 pub async fn send_pow_config(session: Session) -> ServiceResult<impl Responder> {
     let config = PoWConfig::new(&session)?;
+    debug!("PoW generated: {:#?}", &config);
     Ok(HttpResponse::Ok().json(config))
 }

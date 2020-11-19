@@ -18,10 +18,8 @@
 mod handlers;
 mod payload;
 mod routes;
-mod verify;
 
 pub static DIFFICULTY: u128 = u128::max_value() - u128::max_value() / 100_00000;
 
 pub use payload::PoWConfig;
 pub use routes::routes;
-pub use verify::verify_pow;

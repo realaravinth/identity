@@ -15,23 +15,12 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+use deadpool_postgres::{Config, ManagerConfig, Pool, RecyclingMethod};
+use tokio_postgres::NoTls;
+
 use crate::SETTINGS;
 
-use deadpool_postgres::{Config, Manager, ManagerConfig, Pool, RecyclingMethod};
-use tokio_postgres::NoTls;
-//use diesel::prelude::*;
-//use diesel::r2d2::{self, ConnectionManager};
-//
-//pub type ConnectionPool = r2d2::Pool<ConnectionManager<PgConnection>>;
-//
 pub fn get_connection_pool() -> Pool {
-    //-> ConnectionPool {
-    //    let connection_manager = ConnectionManager::<PgConnection>::new(connection_url);
-    //    let pool = r2d2::Pool::builder()
-    //        .build(connection_manager)
-    //        .expect("Connection Pool");
-    //
-    //    pool
     let config: crate::settings::Database = SETTINGS.database.clone();
 
     let mut pg_config: Config = config.into();

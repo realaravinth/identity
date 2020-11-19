@@ -20,7 +20,7 @@ use actix_web::{web, HttpResponse, Responder};
 
 use super::payload::LoginCreds;
 use crate::errors::ServiceResult;
-use crate::pow::{verify_pow, PoWConfig};
+use crate::pow::PoWConfig;
 
 pub async fn sign_in(
     session: Session,

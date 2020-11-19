@@ -16,12 +16,12 @@
 */
 
 use actix_session::Session;
-
-use crate::errors::{ServiceError, ServiceResult};
+use pow_sha256::PoW;
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
 
 use super::DIFFICULTY;
+use crate::errors::{ServiceError, ServiceResult};
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct PoWConfig {
@@ -44,6 +44,21 @@ impl PoWConfig {
                 difficulty: DIFFICULTY,
                 phrase,
             })
+        }
+    }
+
+    pub fn verify_pow(session: &Session, pow: &PoW<Vec<u8>>) -> ServiceResult<()> {
+        let session_id = session.get::<String>("PoW")?;
+        if let Some(id) = session_id {
+            if pow.is_sufficient_difficulty(DIFFICULTY)
+                && pow.is_valid_proof(&id.as_bytes().to_vec())
+            {
+                Ok(())
+            } else {
+                Err(ServiceError::PoWInvalid)
+            }
+        } else {
+            Err(ServiceError::PoWRequired)
         }
     }
 }

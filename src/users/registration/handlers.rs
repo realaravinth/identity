@@ -22,14 +22,14 @@ use deadpool_postgres::{Client, Pool};
 use super::models::User;
 use super::payload::Unvalidated_RegisterCreds;
 use crate::errors::*;
-use crate::pow::verify_pow;
+use crate::pow::PoWConfig;
 
 pub async fn sign_up(
     session: Session,
     creds: web::Json<Unvalidated_RegisterCreds>,
     db_pool: web::Data<Pool>,
 ) -> ServiceResult<impl Responder> {
-    verify_pow(&session, &creds.pow).await?;
+    PoWConfig::verify_pow(&session, &creds.pow)?;
     let processed_creds: User = creds.process()?.into();
     let new_user = processed_creds.add_user(db_pool).await?;
     debug!("{:?}", new_user);
