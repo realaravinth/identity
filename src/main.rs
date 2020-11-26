@@ -93,14 +93,8 @@ async fn main() -> std::io::Result<()> {
                     .domain(&SETTINGS.server.domain)
                     .name("shuttlecraft-session")
                     .path("/")
-                    .secure(false),
-            )
-            .wrap(
-                CookieSession::signed(&cookie_secret.as_bytes())
-                    .domain(&SETTINGS.server.domain)
-                    .name("on")
-                    .path("/")
-                    .secure(false),
+                    .secure(false), //TODO change dynamically between true and false
+                                    //                    based on mode=DEVEL
             )
             .wrap(IdentityService::new(
                 CookieIdentityPolicy::new(cookie_secret.as_bytes())
