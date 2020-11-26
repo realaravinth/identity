@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up | Shuttlecraft</title>
+  </head>
+  <link rel="stylesheet" href="main.css" />
+  <body>
+    <div class="container">
+      <form>
+        <h1>Sign Up</h1>
+        <p>Create your Shuttlecraft Account</p>
+        <div class="form-group">
+          <label class="label">
+            Username:
+          </label>
+          <input
+            required="{true}"
+            autofocus="{true}"
+            autocomplete="username"
+            name="username"
+            type="text"
+            placeholder="Username"
+            onchange="{this.handleInputChange}"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="label">
+            email:
+          </label>
+          <input
+            required="{true}"
+            autofocus="{true}"
+            autocomplete="username"
+            name="username"
+            type="email"
+            placeholder="Username"
+            onchange="{this.handleInputChange}"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="label">
+            Password:
+          </label>
+          <input
+            required="{true}"
+            autocomplete="current-password"
+            name="password"
+            placeholder="Password"
+            type="password"
+            onchange="{this.handleInputChange}"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="label">
+            Confirm password:
+          </label>
+          <input
+            required="{true}"
+            autofocus="{true}"
+            autocomplete="username"
+            name="username"
+            type="password"
+            placeholder="Confirm"
+            onchange="{this.handleInputChange}"
+          />
+        </div>
+
+        <div class="form-group">
+          <div class="btn-container">
+            <a href="/signin">Sign in instead</a>
+            <input class="btn" type="submit" value="Sign Up" />
+          </div>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

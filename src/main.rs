@@ -24,6 +24,8 @@ extern crate serde_derive;
 #[macro_use]
 extern crate lazy_static;
 
+use actix_files::Files;
+use actix_http::cookie::SameSite;
 use actix_identity::{CookieIdentityPolicy, IdentityService};
 use actix_session::CookieSession;
 use actix_web::{
@@ -78,6 +80,7 @@ async fn main() -> std::io::Result<()> {
                 CookieSession::signed(&cookie_secret.as_bytes())
                     .domain(&SETTINGS.server.domain)
                     .name("shuttlecraft-session")
+                    .same_site(SameSite::Strict)
                     .path("/")
                     .secure(false), //TODO change dynamically between true and false
                                     //                    based on mode=DEVEL
@@ -92,6 +95,7 @@ async fn main() -> std::io::Result<()> {
             .configure(routes)
             .wrap(Logger::default())
             .data(database_connection_pool.clone())
+            .service(Files::new("/", "./frontend/dist").index_file("signin.html"))
     })
     .bind(format!(
         "{}:{}",
