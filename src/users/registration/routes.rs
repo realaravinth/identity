@@ -16,7 +16,7 @@
 */
 
 use super::handlers::*;
-use actix_web::web::{self, HttpResponse};
+use actix_web::web;
 
 #[cfg(not(tarpaulin_include))]
 pub fn routes(cfg: &mut web::ServiceConfig) {

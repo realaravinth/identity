@@ -17,8 +17,8 @@
 
 use actix_http::ResponseBuilder;
 use actix_web::{error::ResponseError, http::header, http::StatusCode, HttpResponse};
-use failure::Fail;
 use serde::{Deserialize, Serialize};
+use thiserror::Error;
 use tokio_pg_mapper::Error as PGMError;
 use tokio_postgres::error::Error as PGError;
 use tokio_postgres::error::SqlState as PGBError;
@@ -26,30 +26,26 @@ use validator::ValidationErrors;
 
 use std::convert::From;
 
-#[derive(Debug, PartialEq, Fail)]
+#[derive(Debug, PartialEq, Error)]
 #[cfg(not(tarpaulin_include))]
 pub enum ServiceError {
-    #[fail(display = "some characters are not permitted")] //405j
+    #[error("some characters are not permitted")] //405j
     UsernameError,
-    #[fail(display = "username exists")] //405
+    #[error("username exists")] //405
     UsernameExists,
-    #[fail(display = "invalid credentials")]
+    #[error("invalid credentials")]
     AuthorizationRequired,
-    #[fail(display = "internal error")] // 500
+    #[error("internal error")] // 500
     InternalServerError,
-    #[fail(display = "timeout")] //408
-    Timeout,
-    #[fail(display = "bad request")] //400
+    #[error("bad request")] //400
     BadRequest,
-    #[fail(display = "Unable to connect to DB")]
-    UnableToConnectToDb,
-    #[fail(display = "PoW required, request not processed")]
+    #[error("PoW required, request not processed")]
     PoWRequired,
-    #[fail(display = "PoW submitted is incorrect")]
+    #[error("PoW submitted is incorrect")]
     PoWInvalid,
-    #[fail(display = "The value you entered for email is not an email")] //405j
+    #[error("The value you entered for email is not an email")] //405j
     NotAnEmail,
-    #[fail(display = "Account Doesn't exist")]
+    #[error("Account Doesn't exist")]
     AccountDoesntExist,
 }
 
@@ -75,8 +71,6 @@ impl ResponseError for ServiceError {
             ServiceError::AuthorizationRequired => StatusCode::UNAUTHORIZED,
             ServiceError::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
             ServiceError::BadRequest => StatusCode::BAD_REQUEST,
-            ServiceError::Timeout => StatusCode::GATEWAY_TIMEOUT,
-            ServiceError::UnableToConnectToDb => StatusCode::INTERNAL_SERVER_ERROR,
             ServiceError::PoWRequired => StatusCode::PAYMENT_REQUIRED,
             ServiceError::PoWInvalid => StatusCode::BAD_REQUEST,
             ServiceError::NotAnEmail => StatusCode::BAD_REQUEST,
@@ -86,7 +80,7 @@ impl ResponseError for ServiceError {
 }
 
 impl From<PGMError> for ServiceError {
-    fn from(error: PGMError) -> ServiceError {
+    fn from(_: PGMError) -> ServiceError {
         // Right now we just care about UniqueViolation from diesel
         // But this would be helpful to easily map errors as our app grows
         ServiceError::InternalServerError
@@ -120,13 +114,13 @@ impl From<PGError> for ServiceError {
 }
 
 impl From<actix_http::Error> for ServiceError {
-    fn from(error: actix_http::Error) -> ServiceError {
+    fn from(_: actix_http::Error) -> ServiceError {
         ServiceError::InternalServerError
     }
 }
 
 impl From<deadpool_postgres::PoolError> for ServiceError {
-    fn from(error: deadpool_postgres::PoolError) -> ServiceError {
+    fn from(_: deadpool_postgres::PoolError) -> ServiceError {
         ServiceError::InternalServerError
     }
 }
@@ -138,7 +132,7 @@ impl From<deadpool_postgres::PoolError> for ServiceError {
 //}
 
 impl From<argon2::Error> for ServiceError {
-    fn from(error: argon2::Error) -> ServiceError {
+    fn from(_: argon2::Error) -> ServiceError {
         ServiceError::InternalServerError
     }
 }

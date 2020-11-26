@@ -19,5 +19,4 @@ mod handlers;
 mod payload;
 mod routes;
 
-use super::{beep, filter, forbidden, verify};
 pub use routes::routes;

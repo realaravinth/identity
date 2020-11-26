@@ -15,7 +15,7 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-use actix_web::web::{self, HttpResponse};
+use actix_web::web;
 
 use super::handlers::send_pow_config;
 

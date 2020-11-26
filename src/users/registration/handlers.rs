@@ -14,19 +14,18 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-use actix_identity::Identity;
 use actix_session::Session;
 use actix_web::{web, HttpResponse, Responder};
-use deadpool_postgres::{Client, Pool};
+use deadpool_postgres::Pool;
 
 use super::models::User;
-use super::payload::Unvalidated_RegisterCreds;
+use super::payload::UnvalidatedRegisterCreds;
 use crate::errors::*;
 use crate::pow::PoWConfig;
 
 pub async fn sign_up(
     session: Session,
-    creds: web::Json<Unvalidated_RegisterCreds>,
+    creds: web::Json<UnvalidatedRegisterCreds>,
     db_pool: web::Data<Pool>,
 ) -> ServiceResult<impl Responder> {
     PoWConfig::verify_pow(&session, &creds.pow)?;

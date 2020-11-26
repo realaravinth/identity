@@ -15,20 +15,7 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-use ammonia::clean;
-use argon2::verify_encoded;
-use derive_more::AsRef;
-use pow_sha256::PoW;
-use rand::distributions::Alphanumeric;
-use rand::{thread_rng, Rng};
 use serde::{Deserialize, Serialize};
-use unicode_normalization::UnicodeNormalization;
-use validator::Validate;
-use validator_derive::Validate;
-
-use super::{beep, filter, forbidden, verify};
-use crate::errors::*;
-use crate::SETTINGS;
 
 #[derive(Debug, Default, Clone, PartialEq, Deserialize, Serialize)]
 pub struct LoginCreds {

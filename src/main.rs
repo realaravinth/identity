@@ -19,23 +19,10 @@
 use pretty_env_logger;
 #[macro_use]
 extern crate log;
-extern crate actix;
-extern crate argon2;
-extern crate config;
-extern crate futures;
-extern crate regex;
-extern crate unicode_normalization;
-extern crate uuid;
-#[macro_use]
-extern crate num_cpus;
-extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 #[macro_use]
 extern crate lazy_static;
-extern crate validator;
-#[macro_use]
-extern crate validator_derive;
 
 use actix_identity::{CookieIdentityPolicy, IdentityService};
 use actix_session::CookieSession;
@@ -47,7 +34,6 @@ use actix_web::{
 };
 
 use regex::Regex;
-use std::env;
 
 mod database;
 mod errors;

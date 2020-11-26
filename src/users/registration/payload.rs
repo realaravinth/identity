@@ -25,12 +25,12 @@ use unicode_normalization::UnicodeNormalization;
 use validator::Validate;
 use validator_derive::Validate;
 
-use super::{beep, filter, forbidden, verify};
+use super::{beep, filter, forbidden};
 use crate::errors::*;
 use crate::SETTINGS;
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-pub struct Unvalidated_RegisterCreds {
+pub struct UnvalidatedRegisterCreds {
     pub username: String,
     pub email_id: Option<String>,
     pub password: String,
@@ -55,7 +55,7 @@ pub struct RegisterCreds {
 //        &mut self
 //    }
 //}
-impl Unvalidated_RegisterCreds {
+impl UnvalidatedRegisterCreds {
     pub fn process(&self) -> ServiceResult<RegisterCreds> {
         let creds = RegisterCreds::new()
             .set_email(&self.email_id)?

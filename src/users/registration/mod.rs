@@ -21,5 +21,5 @@ mod models;
 mod payload;
 mod routes;
 
-use super::{beep, filter, forbidden, verify};
+use super::{beep, filter, forbidden};
 pub use routes::routes;

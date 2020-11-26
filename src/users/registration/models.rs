@@ -15,12 +15,11 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+use actix_web::web;
 use deadpool_postgres::{Client, Pool};
 use serde::{Deserialize, Serialize};
 use tokio_pg_mapper::FromTokioPostgresRow;
 use tokio_pg_mapper_derive::PostgresMapper;
-
-use actix_web::{web, HttpResponse, Responder};
 
 use super::payload::RegisterCreds;
 use crate::errors::*;

@@ -16,7 +16,6 @@
 */
 use actix_session::Session;
 use actix_web::{HttpResponse, Responder};
-use pow_sha256::PoW;
 
 use super::PoWConfig;
 use crate::errors::*;

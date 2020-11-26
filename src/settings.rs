@@ -78,7 +78,7 @@ pub struct Settings {
 impl Settings {
     fn extract_database_url(url: &Url) -> Database {
         if url.scheme() != "postgres" || url.scheme() != "postgresql" {
-            panic!("URL must be postgres://url");
+            panic!("URL must be postgres://url, url found: {}", url.scheme());
         } else {
             Database {
                 port: url.port().expect("Enter database port").into(),

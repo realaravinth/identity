@@ -47,7 +47,7 @@ jobs:
         if: matrix.version == 'stable' && (github.ref == 'refs/heads/master' || github.event_name == 'pull_request')
         run: |
           cargo install cargo-tarpaulin --vers "^0.13"
-          cargo tarpaulin --out Xml
+          cargo tarpaulin  --exclude-files src/schema.rs src/errors.rs  -t 1200  --out Xml
       - name: Upload to Codecov
         if: matrix.version == 'stable' && (github.ref == 'refs/heads/master' || github.event_name == 'pull_request')
         uses: codecov/codecov-action@v1
