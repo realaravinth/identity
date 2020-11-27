@@ -17,14 +17,9 @@
 
 mod utils;
 
-mod authentication;
-mod handlers;
-mod registration;
-mod routes;
+pub mod authentication;
+pub mod registration;
 
-use authentication::routes as authentication_routes;
-use registration::routes as registration_routes;
-pub use routes::routes;
 pub use utils::{beep, PROFAINITY};
 pub use utils::{filter, USERNAME_CASE_MAPPED};
 pub use utils::{forbidden, BLACKLIST};

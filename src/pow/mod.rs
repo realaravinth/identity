@@ -15,11 +15,9 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-mod handlers;
+pub mod handlers;
 mod payload;
-mod routes;
 
 pub static DIFFICULTY: u128 = u128::max_value() - u128::max_value() / 100_00000;
 
 pub use payload::PoWConfig;
-pub use routes::routes;

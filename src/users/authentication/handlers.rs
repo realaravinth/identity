@@ -16,11 +16,12 @@
 
 use actix_identity::Identity;
 use actix_session::Session;
-use actix_web::{web, HttpResponse, Responder};
+use actix_web::{post, web, HttpResponse, Responder};
 
 use super::payload::LoginCreds;
 use crate::errors::ServiceResult;
 
+#[post("/api/signin")]
 pub async fn sign_in(
     session: Session,
     creds: web::Json<LoginCreds>,
@@ -30,9 +31,14 @@ pub async fn sign_in(
     Ok(HttpResponse::Ok().finish())
 }
 
+#[post("/api/signout")]
 pub async fn sign_out(id: Identity) -> ServiceResult<impl Responder> {
     id.forget();
     Ok(HttpResponse::Ok()
         .content_type("text/html")
         .body("You are successfully signed out"))
+}
+
+pub fn services(cfg: &mut web::ServiceConfig) {
+    cfg.service(sign_in).service(sign_out);
 }

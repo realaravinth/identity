@@ -15,13 +15,18 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 use actix_session::Session;
-use actix_web::{HttpResponse, Responder};
+use actix_web::{get, web::ServiceConfig, HttpResponse, Responder};
 
 use super::PoWConfig;
 use crate::errors::*;
 
-pub async fn send_pow_config(session: Session) -> ServiceResult<impl Responder> {
+#[get("/api/pow")]
+async fn get_pow(session: Session) -> ServiceResult<impl Responder> {
     let config = PoWConfig::new(&session)?;
     debug!("PoW generated: {:#?}", &config);
     Ok(HttpResponse::Ok().json(config))
+}
+
+pub fn services(cfg: &mut ServiceConfig) {
+    cfg.service(get_pow);
 }

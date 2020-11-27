@@ -31,7 +31,7 @@ use actix_session::CookieSession;
 use actix_web::{
     error::InternalError,
     http::StatusCode,
-    middleware::{Compress, Logger},
+    middleware::{Compress, Logger, NormalizePath},
     web, App, HttpServer,
 };
 
@@ -40,7 +40,6 @@ use regex::Regex;
 mod database;
 mod errors;
 mod pow;
-mod routes;
 mod settings;
 mod users;
 
@@ -49,7 +48,6 @@ use crate::users::PROFAINITY;
 use crate::users::USERNAME_CASE_MAPPED;
 
 use database::get_connection_pool;
-use routes::routes;
 use settings::Settings;
 
 lazy_static! {
@@ -63,6 +61,7 @@ lazy_static! {
 }
 
 #[actix_rt::main]
+#[cfg(not(tarpaulin_include))]
 async fn main() -> std::io::Result<()> {
     let cookie_secret = &SETTINGS.server.cookie_secret;
 
@@ -92,10 +91,13 @@ async fn main() -> std::io::Result<()> {
                     .domain(&SETTINGS.server.domain)
                     .secure(true),
             ))
-            .configure(routes)
-            .wrap(Logger::default())
+            .configure(pow::handlers::services)
+            .configure(users::registration::handlers::services)
+            .configure(users::authentication::handlers::services)
             .data(database_connection_pool.clone())
-            .service(Files::new("/", "./frontend/dist").index_file("signin.html"))
+            //.service(Files::new("/", "./frontend/dist").index_file("signin.html"))
+            //
+            .wrap(Logger::default())
     })
     .bind(format!(
         "{}:{}",

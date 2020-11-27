@@ -15,7 +15,7 @@
 */
 
 use actix_session::Session;
-use actix_web::{web, HttpResponse, Responder};
+use actix_web::{post, web, HttpResponse, Responder};
 use deadpool_postgres::Pool;
 
 use super::models::User;
@@ -23,6 +23,7 @@ use super::payload::UnvalidatedRegisterCreds;
 use crate::errors::*;
 use crate::pow::PoWConfig;
 
+#[post("/api/signup")]
 pub async fn sign_up(
     session: Session,
     creds: web::Json<UnvalidatedRegisterCreds>,
@@ -35,4 +36,8 @@ pub async fn sign_up(
     Ok(HttpResponse::Ok()
         .set_header(actix_web::http::header::CONNECTION, "close")
         .finish())
+}
+
+pub fn services(cfg: &mut web::ServiceConfig) {
+    cfg.service(sign_up);
 }

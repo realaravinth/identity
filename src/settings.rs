@@ -50,6 +50,7 @@ pub struct Database {
     pub url: String,
 }
 
+#[cfg(not(tarpaulin_include))]
 impl From<Database> for deadpool_postgres::Config {
     fn from(config: Database) -> Self {
         let pool = Some(deadpool::managed::PoolConfig::new(config.pool as usize));
@@ -75,9 +76,10 @@ pub struct Settings {
     pub password_difficulty: PasswordDifficulty,
 }
 
+#[cfg(not(tarpaulin_include))]
 impl Settings {
     fn extract_database_url(url: &Url) -> Database {
-        if url.scheme() != "postgres" || url.scheme() != "postgresql" {
+        if url.scheme() != "postgres" || url.scheme() != "postgresql/" {
             panic!("URL must be postgres://url, url found: {}", url.scheme());
         } else {
             Database {
