@@ -20,6 +20,7 @@ use tokio_postgres::NoTls;
 
 use crate::SETTINGS;
 
+#[cfg(not(tarpaulin_include))]
 pub fn get_connection_pool() -> Pool {
     let config: crate::settings::Database = SETTINGS.database.clone();
 

@@ -9,9 +9,9 @@ debug = true
 # password = "somereallycomplicatedBatmanpassword"
 hostname = "localhost"
 port = "5432"
-username = "aravinth"
-password = ""
-name = "authdevel"
+username = "postgres"
+password = "password"
+name = "postgres"
 
 [server]
 # This section deals with the configuration of the actual server

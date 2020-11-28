@@ -16,17 +16,56 @@
 */
 use actix_session::Session;
 use actix_web::{get, web::ServiceConfig, HttpResponse, Responder};
+use rand::{distributions::Alphanumeric, thread_rng, Rng};
 
 use super::PoWConfig;
 use crate::errors::*;
 
 #[get("/api/pow")]
 async fn get_pow(session: Session) -> ServiceResult<impl Responder> {
-    let config = PoWConfig::new(&session)?;
-    debug!("PoW generated: {:#?}", &config);
-    Ok(HttpResponse::Ok().json(config))
+    let session_id = session.get::<String>("PoW");
+    if let Some(_id) = session_id? {
+        Err(ServiceError::PoWRequired)
+    } else {
+        let phrase: String = thread_rng().sample_iter(&Alphanumeric).take(32).collect();
+        session.set("PoW", &phrase)?;
+        let config = PoWConfig::new(&phrase);
+        debug!("PoW generated: {:#?}", &config);
+        Ok(HttpResponse::Ok().json(config))
+    }
 }
 
 pub fn services(cfg: &mut ServiceConfig) {
     cfg.service(get_pow);
+}
+
+#[cfg(test)]
+mod tests {
+    use actix_web::{http::StatusCode, test};
+
+    #[actix_rt::test]
+    async fn get_pow_works() {
+        let mut app = test::init_service(crate::create_app()).await;
+
+        let mut response = test::call_service(
+            &mut app,
+            test::TestRequest::get().uri("/api/pow").to_request(),
+        )
+        .await;
+
+        assert!(response.status().is_success(), "pow works");
+
+        let cookie = response.response().cookies().next().unwrap().to_owned();
+
+        response = test::call_service(
+            &mut app,
+            test::TestRequest::get()
+                .cookie(cookie.clone())
+                .uri("/api/pow")
+                .to_request(),
+        )
+        .await;
+
+        assert_eq!(response.status(), StatusCode::PAYMENT_REQUIRED, "pow works");
+    }
 }

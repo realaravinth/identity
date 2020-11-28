@@ -1,8 +1,7 @@
 /*
 * Copyright (C) 2020  Aravinth Manivannan <realaravinth@batsense.net>
 *
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Affero General Public License as
+* This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as
 * published by the Free Software Foundation, either version 3 of the
 * License, or (at your option) any later version.
 *
@@ -15,9 +14,19 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-pub mod handlers;
-mod payload;
+use deadpool_postgres::Pool;
 
-pub use payload::PoWConfig;
+use crate::database::get_connection_pool;
 
-pub static DIFFICULTY: u128 = u128::max_value() - u128::max_value() / 100_00000;
+#[cfg(test)]
+#[derive(Clone)]
+pub struct DbPool {
+    pub pool: Pool,
+}
+
+#[cfg(test)]
+lazy_static! {
+    pub static ref POOL: DbPool = DbPool {
+        pool: get_connection_pool()
+    };
+}

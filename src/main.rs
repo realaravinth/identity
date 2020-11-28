@@ -20,35 +20,36 @@ use pretty_env_logger;
 #[macro_use]
 extern crate log;
 #[macro_use]
-extern crate serde_derive;
-#[macro_use]
 extern crate lazy_static;
+#[macro_use]
+extern crate serde_derive;
 
-use actix_files::Files;
 use actix_http::cookie::SameSite;
+use actix_http::Error;
 use actix_identity::{CookieIdentityPolicy, IdentityService};
 use actix_session::CookieSession;
 use actix_web::{
+    dev,
     error::InternalError,
     http::StatusCode,
-    middleware::{Compress, Logger, NormalizePath},
+    middleware::{Compress, Logger},
     web, App, HttpServer,
 };
-
 use regex::Regex;
 
 mod database;
 mod errors;
 mod pow;
 mod settings;
+#[cfg(test)]
+mod test;
 mod users;
-
-use crate::users::BLACKLIST;
-use crate::users::PROFAINITY;
-use crate::users::USERNAME_CASE_MAPPED;
 
 use database::get_connection_pool;
 use settings::Settings;
+use users::BLACKLIST;
+use users::PROFAINITY;
+use users::USERNAME_CASE_MAPPED;
 
 lazy_static! {
     pub static ref SETTINGS: Settings = Settings::new().expect("couldn't load settings");
@@ -63,37 +64,15 @@ lazy_static! {
 #[actix_rt::main]
 #[cfg(not(tarpaulin_include))]
 async fn main() -> std::io::Result<()> {
-    let cookie_secret = &SETTINGS.server.cookie_secret;
-
+    pretty_env_logger::init();
+    lazy_static::initialize(&SETTINGS);
     let database_connection_pool = get_connection_pool();
 
-    pretty_env_logger::init();
+    debug!("Configuration: {:#?}", *SETTINGS);
+
     HttpServer::new(move || {
-        App::new()
+        create_app()
             .wrap(Compress::default())
-            .app_data(web::JsonConfig::default().error_handler(|err, _| {
-                debug!("JSON deserialization error: {:?}", &err);
-                InternalError::new(err, StatusCode::BAD_REQUEST).into()
-            }))
-            .wrap(
-                CookieSession::signed(&cookie_secret.as_bytes())
-                    .domain(&SETTINGS.server.domain)
-                    .name("shuttlecraft-session")
-                    .same_site(SameSite::Strict)
-                    .path("/")
-                    .secure(false), //TODO change dynamically between true and false
-                                    //                    based on mode=DEVEL
-            )
-            .wrap(IdentityService::new(
-                CookieIdentityPolicy::new(cookie_secret.as_bytes())
-                    .name("Authorization")
-                    .max_age(20)
-                    .domain(&SETTINGS.server.domain)
-                    .secure(true),
-            ))
-            .configure(pow::handlers::services)
-            .configure(users::registration::handlers::services)
-            .configure(users::authentication::handlers::services)
             .data(database_connection_pool.clone())
             //.service(Files::new("/", "./frontend/dist").index_file("signin.html"))
             //
@@ -109,4 +88,53 @@ async fn main() -> std::io::Result<()> {
     ))
     .run()
     .await
+}
+
+pub fn get_identity_service() -> IdentityService<CookieIdentityPolicy> {
+    let cookie_secret = &SETTINGS.server.cookie_secret;
+    IdentityService::new(
+        CookieIdentityPolicy::new(cookie_secret.as_bytes())
+            .name("Authorization")
+            .max_age(20)
+            .domain(&SETTINGS.server.domain)
+            .secure(true),
+    )
+}
+
+pub fn get_json_err() -> web::JsonConfig {
+    web::JsonConfig::default().error_handler(|err, _| {
+        debug!("JSON deserialization error: {:?}", &err);
+        InternalError::new(err, StatusCode::BAD_REQUEST).into()
+    })
+}
+
+pub fn get_cookie() -> CookieSession {
+    let cookie_secret = &SETTINGS.server.cookie_secret;
+    CookieSession::signed(&cookie_secret.as_bytes())
+        .domain(&SETTINGS.server.domain)
+        .name("pow")
+        .same_site(SameSite::Strict)
+        .path("/")
+        .secure(false) //TODO change dynamically between true and false
+                       //                    based on mode=DEVEL
+}
+
+#[cfg(not(tarpaulin_include))]
+pub fn create_app() -> App<
+    impl actix_service::ServiceFactory<
+        Config = (),
+        Request = dev::ServiceRequest,
+        Response = dev::ServiceResponse<actix_http::body::Body>,
+        Error = Error,
+        InitError = (),
+    >,
+    actix_http::body::Body,
+> {
+    App::new()
+        .configure(pow::handlers::services)
+        .configure(users::registration::handlers::services)
+        .configure(users::authentication::handlers::services)
+        .app_data(get_json_err())
+        .wrap(get_cookie())
+        .wrap(get_identity_service())
 }

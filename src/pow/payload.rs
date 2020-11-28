@@ -17,11 +17,10 @@
 
 use actix_session::Session;
 use pow_sha256::PoW;
-use rand::distributions::Alphanumeric;
-use rand::{thread_rng, Rng};
+
+use crate::errors::{ServiceError, ServiceResult};
 
 use super::DIFFICULTY;
-use crate::errors::{ServiceError, ServiceResult};
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct PoWConfig {
@@ -30,26 +29,20 @@ pub struct PoWConfig {
 }
 
 impl PoWConfig {
-    pub fn new(session: &Session) -> ServiceResult<PoWConfig> {
-        let session_id = session.get::<String>("PoW");
-        if let Some(_id) = session_id? {
-            Err(ServiceError::PoWRequired)
-        } else {
-            // TODO: Move difficulty into app state(?)
-            // ultimately, difficulty should be adjusted according to
-            // server load
-            let phrase: String = thread_rng().sample_iter(&Alphanumeric).take(32).collect();
-            session.set("PoW", &phrase)?;
-            Ok(PoWConfig {
-                difficulty: DIFFICULTY,
-                phrase,
-            })
+    pub fn new(phrase: &str) -> PoWConfig {
+        // TODO: Move difficulty into app state(?)
+        // ultimately, difficulty should be adjusted according to
+        // server load
+        PoWConfig {
+            difficulty: DIFFICULTY,
+            phrase: phrase.into(),
         }
     }
 
     pub fn verify_pow(session: &Session, pow: &PoW<Vec<u8>>) -> ServiceResult<()> {
         let session_id = session.get::<String>("PoW")?;
         if let Some(id) = session_id {
+            debug!("pow: {}", id);
             if pow.is_sufficient_difficulty(DIFFICULTY)
                 && pow.is_valid_proof(&id.as_bytes().to_vec())
             {
@@ -63,14 +56,16 @@ impl PoWConfig {
     }
 }
 
-//#[cfg(tests)]
-//mod tests {
-//    use super::*;
-//    use actix_session::Session;
-//
-//    #[actix_rt::test]
-//    async fn test_gen_pow() {
-//        let session = Session::new();
-//        println!("{:?}", session);
-//    }
-//}
+#[cfg(tests)]
+mod tests {
+    use super::*;
+    use actix_session::Session;
+
+    #[actix_rt::test]
+    async fn test_gen_pow() {
+        let phrase = "testing";
+        let pow_config = PoWConfig::new(phrase);
+        assert_eq(PoWConfig.difficulty, DIFFICULTY);
+        assert_eq(PoWConfig.phrase, phrase.into());
+    }
+}
