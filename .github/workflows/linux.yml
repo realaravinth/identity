@@ -77,14 +77,14 @@ jobs:
         timeout-minutes: 40
         with:
           command: test
-          args: --all --all-features --no-fail-fast -- --nocapture
+          args: --all --all-features --no-fail-fast -- --nocapture --release
 
       - name: Generate coverage file
         if: matrix.version == 'stable' && (github.ref == 'refs/heads/master' || github.event_name == 'pull_request')
         uses: actions-rs/tarpaulin@v0.1
         with:
           version: '0.15.0'
-          args: '--exclude-files src/schema.rs src/errors.rs  -t 1200'
+          args: '--release --exclude-files src/schema.rs src/errors.rs  -t 1200'
 
       - name: Upload to Codecov
         if: matrix.version == 'stable' && (github.ref == 'refs/heads/master' || github.event_name == 'pull_request')
