@@ -21,7 +21,6 @@ jobs:
     name: ${{ matrix.version }} - x86_64-unknown-linux-gnu
     runs-on: ubuntu-latest
 
-     Service containers to run with `runner-job`
     services:
       # Label used to access the service container
       postgres:
