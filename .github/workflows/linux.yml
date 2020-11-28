@@ -49,6 +49,7 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
+            ~/.cargo/bin
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
@@ -61,7 +62,7 @@ jobs:
       - name: Install diesel cli
         run: cargo install diesel_cli --no-default-features --features postgres
       - name: Run migrations
-        run: diesel migrations run
+        run: diesel migration run
         env:
           DATABASE_URL: postgres://postgres:password@localhost:5432/postgres
 
