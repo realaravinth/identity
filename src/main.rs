@@ -38,6 +38,7 @@ use actix_web::{
 };
 use regex::Regex;
 
+mod data;
 mod database;
 mod errors;
 mod pow;
@@ -46,7 +47,7 @@ mod settings;
 mod test;
 mod users;
 
-use database::get_connection_pool;
+pub use data::Data;
 use settings::Settings;
 use users::BLACKLIST;
 use users::PROFAINITY;
@@ -67,14 +68,15 @@ lazy_static! {
 async fn main() -> std::io::Result<()> {
     pretty_env_logger::init();
     lazy_static::initialize(&SETTINGS);
-    let database_connection_pool = get_connection_pool();
+
+    let data = Data::default();
 
     debug!("Configuration: {:#?}", *SETTINGS);
 
     HttpServer::new(move || {
         create_app()
             .wrap(Compress::default())
-            .data(database_connection_pool.clone())
+            .data(data.clone())
             .service(Files::new("/", "./frontend/dist").index_file("signin.html"))
             //
             .wrap(Logger::default())
@@ -131,10 +133,6 @@ pub fn create_app() -> App<
     >,
     actix_http::body::Body,
 > {
-    use actix::prelude::*;
-    use pow::Counter;
-
-    let addr = Counter::default().start();
     App::new()
         .configure(pow::handlers::services)
         .configure(users::registration::handlers::services)
@@ -142,5 +140,4 @@ pub fn create_app() -> App<
         .app_data(get_json_err())
         .wrap(get_cookie())
         .wrap(get_identity_service())
-        .data(addr.clone())
 }

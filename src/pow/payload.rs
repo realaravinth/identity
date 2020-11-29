@@ -42,7 +42,6 @@ impl PoWConfig {
     pub fn verify_pow(session: &Session, pow: &PoW<Vec<u8>>) -> ServiceResult<()> {
         let session_id = session.get::<String>("PoW")?;
         if let Some(id) = session_id {
-            debug!("pow: {}", id);
             if pow.is_sufficient_difficulty(DIFFICULTY)
                 && pow.is_valid_proof(&id.as_bytes().to_vec())
             {

@@ -16,22 +16,22 @@
 
 use actix_session::Session;
 use actix_web::{post, web, HttpResponse, Responder};
-use deadpool_postgres::Pool;
 
 use super::models::User;
 use super::payload::UnvalidatedRegisterCreds;
 use crate::errors::*;
 use crate::pow::PoWConfig;
+use crate::Data;
 
 #[post("/api/signup")]
 pub async fn sign_up(
     session: Session,
     creds: web::Json<UnvalidatedRegisterCreds>,
-    db_pool: web::Data<Pool>,
+    data: web::Data<Data>,
 ) -> ServiceResult<impl Responder> {
     PoWConfig::verify_pow(&session, &creds.pow)?;
     let processed_creds: User = creds.process()?.into();
-    let new_user = processed_creds.add_user(db_pool).await?;
+    let new_user = processed_creds.add_user(&data.into_inner().pool).await?;
     debug!("{:?}", new_user);
     Ok(HttpResponse::Ok()
         .set_header(actix_web::http::header::CONNECTION, "close")
@@ -61,11 +61,12 @@ mod tests {
         pub PoW: String,
     }
 
-    use crate::test::POOL;
+    use crate::test::DATA;
 
     #[actix_rt::test]
     async fn sign_up_works() {
-        let mut app = test::init_service(crate::create_app().data(POOL.pool.clone())).await;
+        let data = Data::default();
+        let mut app = test::init_service(crate::create_app().data(DATA.clone())).await;
 
         let response = test::call_service(
             &mut app,

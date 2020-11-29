@@ -43,7 +43,7 @@ impl From<RegisterCreds> for User {
 }
 
 impl User {
-    pub async fn add_user(&self, db_pool: web::Data<Pool>) -> ServiceResult<User> {
+    pub async fn add_user(&self, db_pool: &Pool) -> ServiceResult<User> {
         let statement = include_str!("./add_user.sql");
         let statement = statement.replace("$table_fields", &User::sql_table_fields());
 

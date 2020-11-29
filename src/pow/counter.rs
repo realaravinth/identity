@@ -1,3 +1,20 @@
+/*
+* Copyright (C) 2020  Aravinth Manivannan <realaravinth@batsense.net>
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU Affero General Public License as
+* published by the Free Software Foundation, either version 3 of the
+* License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU Affero General Public License for more details.
+*
+* You should have received a copy of the GNU Affero General Public License
+* along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 use actix::prelude::*;
 use lazy_static::*;
 use std::time::Duration;
@@ -11,7 +28,7 @@ lazy_static! {
 }
 
 #[derive(Message)]
-#[rtype(result = "usize")]
+#[rtype(result = "u32")]
 pub struct Visitor;
 
 #[derive(Message)]
@@ -41,7 +58,7 @@ impl Actor for Counter {
 }
 
 impl Handler<Visitor> for Counter {
-    type Result = usize;
+    type Result = u32;
     fn handle(&mut self, _: Visitor, ctx: &mut Self::Context) -> Self::Result {
         use actix::clock::delay_for;
 
@@ -86,10 +103,10 @@ mod tests {
     }
     #[actix_rt::test]
     async fn counter_focus_works() {
-        let four: usize = Levels::Four.get_difficulty();
-        let three: usize = Levels::Three.get_difficulty();
-        let two: usize = Levels::Two.get_difficulty();
-        let one: usize = Levels::One.get_difficulty();
+        let four = Levels::Four.get_difficulty();
+        let three = Levels::Three.get_difficulty();
+        let two = Levels::Two.get_difficulty();
+        let one = Levels::One.get_difficulty();
 
         let addr = Counter::default().start();
 
@@ -122,10 +139,10 @@ mod tests {
     #[actix_rt::test]
     async fn counter_relax_works() {
         use actix::clock::delay_for;
-        let four: usize = Levels::Four.get_difficulty();
-        let three: usize = Levels::Three.get_difficulty();
-        let two: usize = Levels::Two.get_difficulty();
-        let one: usize = Levels::One.get_difficulty();
+        let four = Levels::Four.get_difficulty();
+        let three = Levels::Three.get_difficulty();
+        let two = Levels::Two.get_difficulty();
+        let one = Levels::One.get_difficulty();
 
         let addr = Counter::default().start();
 

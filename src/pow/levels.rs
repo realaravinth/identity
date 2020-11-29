@@ -39,14 +39,13 @@ impl Levels {
     ///! ```rust
     ///! let difficulty = u128::max_value() - u128::max_value() / difficulty_factor;
     ///! ```
-    ///! the lower the `difficulty_factor`, the higher the difficulty. 1 is the
-    ///! lowest possible value
+    ///! the higher the `difficulty_factor`, the higher the difficulty.
 
-    pub fn get_difficulty(&self) -> usize {
+    pub fn get_difficulty(&self) -> u32 {
         match self {
             Levels::Three => 100_000,
-            Levels::Four => 1,
-            _ => *self as usize,
+            Levels::Four => 1_000_000,
+            _ => *self as u32,
         }
     }
 
@@ -169,12 +168,12 @@ mod tests {
     fn difficulty_works() {
         let mut level = Levels::default();
 
-        assert_eq!(level.get_difficulty(), Levels::One as usize);
+        assert_eq!(level.get_difficulty(), Levels::One as u32);
         level.next();
-        assert_eq!(level.get_difficulty(), Levels::Two as usize);
+        assert_eq!(level.get_difficulty(), Levels::Two as u32);
         level.next();
         assert_eq!(level.get_difficulty(), 100_000);
         level.next();
-        assert_eq!(level.get_difficulty(), 1);
+        assert_eq!(level.get_difficulty(), 1_000_000);
     }
 }
