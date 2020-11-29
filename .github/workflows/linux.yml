@@ -49,7 +49,6 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-            ~/.cargo/bin
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
@@ -60,8 +59,8 @@ jobs:
           profile: minimal
           override: true
 
-          #      - name: Install diesel cli
-          #        run: cargo install diesel_cli --no-default-features --features postgres
+      - name: Install diesel cli
+        run: cargo install diesel_cli --no-default-features --features postgres
 
       - name: Run migrations
         run: diesel migration run
