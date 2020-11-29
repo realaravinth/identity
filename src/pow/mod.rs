@@ -15,9 +15,14 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+mod counter;
 pub mod handlers;
+mod levels;
 mod payload;
 
+pub use counter::Counter;
 pub use payload::PoWConfig;
+
+use levels::Levels;
 
 pub static DIFFICULTY: u128 = u128::max_value() - u128::max_value() / 100_00000;

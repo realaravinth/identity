@@ -14,7 +14,7 @@ dependencies = [
  "crossbeam-channel",
  "derive_more",
  "futures",
- "lazy_static 1.4.0",
+ "lazy_static",
  "log",
  "parking_lot 0.10.2",
  "pin-project 0.4.27",
@@ -168,7 +168,7 @@ dependencies = [
  "httparse",
  "indexmap",
  "language-tags",
- "lazy_static 1.4.0",
+ "lazy_static",
  "log",
  "mime",
  "percent-encoding",
@@ -216,7 +216,7 @@ dependencies = [
  "indexmap",
  "itoa",
  "language-tags",
- "lazy_static 1.4.0",
+ "lazy_static",
  "log",
  "mime",
  "percent-encoding",
@@ -377,7 +377,7 @@ checksum = "d209f04d002854b9afd3743032a27b066158817965bf5d036824d19ac2cc0e30"
 dependencies = [
  "derive_more",
  "futures-channel",
- "lazy_static 1.4.0",
+ "lazy_static",
  "log",
  "num_cpus",
  "parking_lot 0.11.1",
@@ -580,7 +580,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "89eac85170f4b3fb3dc5e442c1cfb036cb8eecf9dbbd431a161ffad15d90ea3b"
 dependencies = [
  "html5ever",
- "lazy_static 1.4.0",
+ "lazy_static",
  "maplit",
  "markup5ever_rcdom",
  "matches",
@@ -636,12 +636,12 @@ dependencies = [
  "actix-session",
  "actix-web",
  "ammonia",
- "config 0.9.3",
+ "config",
  "deadpool",
  "deadpool-postgres",
  "derive_more",
  "futures",
- "lazy_static 1.4.0",
+ "lazy_static",
  "log",
  "num_cpus",
  "pow_sha256",
@@ -927,29 +927,18 @@ dependencies = [
 
 [[package]]
 name = "config"
-version = "0.9.3"
+version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f9107d78ed62b3fa5a86e7d18e647abed48cfd8f8fab6c72f4cdb982d196f7e6"
+checksum = "19b076e143e1d9538dde65da30f8481c2a6c44040edb8e02b9bf1351edb92ce3"
 dependencies = [
- "lazy_static 1.4.0",
- "nom 4.2.3",
+ "lazy_static",
+ "nom 5.1.2",
  "rust-ini",
  "serde 1.0.117",
  "serde-hjson",
  "serde_json",
  "toml",
  "yaml-rust",
-]
-
-[[package]]
-name = "config"
-version = "0.10.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "19b076e143e1d9538dde65da30f8481c2a6c44040edb8e02b9bf1351edb92ce3"
-dependencies = [
- "lazy_static 1.4.0",
- "nom 5.1.2",
- "serde 1.0.117",
 ]
 
 [[package]]
@@ -1041,7 +1030,7 @@ checksum = "c3c7c73a2d1e9fc0886a08b93e98eb643461230d5f1925e4036204d5f2e261a8"
 dependencies = [
  "autocfg",
  "cfg-if 0.1.10",
- "lazy_static 1.4.0",
+ "lazy_static",
 ]
 
 [[package]]
@@ -1052,7 +1041,7 @@ checksum = "02d96d1e189ef58269ebe5b97953da3274d83a93af647c2ddd6f9dab28cedb8d"
 dependencies = [
  "autocfg",
  "cfg-if 1.0.0",
- "lazy_static 1.4.0",
+ "lazy_static",
 ]
 
 [[package]]
@@ -1091,7 +1080,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4aaff9a7a1de9893f4004fa08527b31cb2ae4121c44e053cf53f29203c73bd23"
 dependencies = [
  "async-trait",
- "config 0.10.1",
+ "config",
  "crossbeam-queue",
  "num_cpus",
  "serde 1.0.117",
@@ -1105,7 +1094,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "faad41e7f93dd682108c72aec029e5bc6238e7df64c9d84832525d4033d2e726"
 dependencies = [
  "async-trait",
- "config 0.10.1",
+ "config",
  "deadpool",
  "futures",
  "log",
@@ -1644,12 +1633,6 @@ name = "language-tags"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a91d884b6667cd606bb5a69aa0c99ba811a115fc68915e7056ec08a46e93199a"
-
-[[package]]
-name = "lazy_static"
-version = "0.2.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "76f033c7ad61445c5b347c7382dd1237847eb1bce590fe50365dcb33d546be73"
 
 [[package]]
 name = "lazy_static"
@@ -2212,6 +2195,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "proc-macro-error"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "da25490ff9892aab3fcf7c36f08cfb902dd3e71ca0f9f9517bea02a73a5ce38c"
+dependencies = [
+ "proc-macro-error-attr",
+ "proc-macro2",
+ "quote",
+ "syn",
+ "version_check 0.9.2",
+]
+
+[[package]]
+name = "proc-macro-error-attr"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a1be40180e52ecc98ad80b184934baf3d0d29f979574e439af5a55274b35f869"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "version_check 0.9.2",
+]
+
+[[package]]
 name = "proc-macro-hack"
 version = "0.5.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2440,11 +2447,11 @@ dependencies = [
 
 [[package]]
 name = "serde-hjson"
-version = "0.8.2"
+version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0b833c5ad67d52ced5f5938b2980f32a9c1c5ef047f0b4fb3127e7a423c76153"
+checksum = "6a3a4e0ea8a88553209f6cc6cfe8724ecad22e1acf372793c27d995290fe74f8"
 dependencies = [
- "lazy_static 0.2.11",
+ "lazy_static",
  "linked-hash-map 0.3.0",
  "num-traits 0.1.43",
  "regex",
@@ -2659,7 +2666,7 @@ version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ddb1139b5353f96e429e1a5e19fbaf663bddedaa06d1dbd49f82e352601209a"
 dependencies = [
- "lazy_static 1.4.0",
+ "lazy_static",
  "new_debug_unreachable",
  "phf_shared",
  "precomputed-hash",
@@ -2763,7 +2770,7 @@ version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d40c6d1b69745a6ec6fb1ca717914848da4b44ae29d9b3080cbee91d72a69b14"
 dependencies = [
- "lazy_static 1.4.0",
+ "lazy_static",
 ]
 
 [[package]]
@@ -2849,7 +2856,7 @@ dependencies = [
  "fnv",
  "futures-core",
  "iovec",
- "lazy_static 1.4.0",
+ "lazy_static",
  "libc",
  "memchr",
  "mio",
@@ -2933,9 +2940,9 @@ dependencies = [
 
 [[package]]
 name = "toml"
-version = "0.4.10"
+version = "0.5.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "758664fc71a3a69038656bee8b6be6477d2a6c315a6b81f7081f591bffa4111f"
+checksum = "75cf45bb0bef80604d001caaec0d09da99611b3c0fd39d3080468875cdb65645"
 dependencies = [
  "serde 1.0.117",
 ]
@@ -2958,7 +2965,7 @@ version = "0.1.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f50de3927f93d202783f4513cda820ab47ef17f624b03c096e86ef00c67e6b5f"
 dependencies = [
- "lazy_static 1.4.0",
+ "lazy_static",
 ]
 
 [[package]]
@@ -2982,7 +2989,7 @@ dependencies = [
  "failure",
  "futures",
  "idna",
- "lazy_static 1.4.0",
+ "lazy_static",
  "log",
  "rand",
  "smallvec",
@@ -3002,7 +3009,7 @@ dependencies = [
  "enum-as-inner",
  "futures",
  "idna",
- "lazy_static 1.4.0",
+ "lazy_static",
  "log",
  "rand",
  "smallvec",
@@ -3021,7 +3028,7 @@ dependencies = [
  "failure",
  "futures",
  "ipconfig",
- "lazy_static 1.4.0",
+ "lazy_static",
  "log",
  "lru-cache",
  "resolv-conf 0.6.3",
@@ -3040,7 +3047,7 @@ dependencies = [
  "cfg-if 0.1.10",
  "futures",
  "ipconfig",
- "lazy_static 1.4.0",
+ "lazy_static",
  "log",
  "lru-cache",
  "resolv-conf 0.7.0",
@@ -3167,33 +3174,41 @@ dependencies = [
 
 [[package]]
 name = "validator"
-version = "0.10.1"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e60fadf92c22236de4028ceb0b8af50ed3430d41ad43d7a7d63b6bd1a8f47c38"
+checksum = "841d6937c33ec6039d8071bcf72933146b5bbe378d645d8fa59bdadabfc2a249"
 dependencies = [
  "idna",
- "lazy_static 1.4.0",
+ "lazy_static",
  "regex",
  "serde 1.0.117",
  "serde_derive",
  "serde_json",
  "url",
+ "validator_types",
 ]
 
 [[package]]
 name = "validator_derive"
-version = "0.10.1"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0d577dfb8ca9440a5c0b053d5a19b68f5c92ef57064bac87c8205c3f6072c20f"
+checksum = "4286b4497f270f59276a89ae0ad109d5f8f18c69b613e3fb22b61201aadb0c4d"
 dependencies = [
  "if_chain",
- "lazy_static 1.4.0",
+ "lazy_static",
+ "proc-macro-error",
  "proc-macro2",
  "quote",
  "regex",
  "syn",
- "validator",
+ "validator_types",
 ]
+
+[[package]]
+name = "validator_types"
+version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ad9680608df133af2c1ddd5eaf1ddce91d60d61b6bc51494ef326458365a470a"
 
 [[package]]
 name = "version_check"
@@ -3236,7 +3251,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f22b422e2a757c35a73774860af8e112bff612ce6cb604224e8e47641a9e4f68"
 dependencies = [
  "bumpalo",
- "lazy_static 1.4.0",
+ "lazy_static",
  "log",
  "proc-macro2",
  "quote",

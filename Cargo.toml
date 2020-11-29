@@ -17,7 +17,7 @@ actix-files = "0.4"
 actix-http = "2"
 actix-identity = "0.3"
 actix-session = "0.4"
-actix-service = "1"
+actix-service = "1.0.6"
 
 pretty_env_logger = "0.4.0"
 log = "0.4.11"
@@ -34,7 +34,7 @@ thiserror = "1.0"
 
 uuid = { version = "0.8", features = ["serde", "v4"] }
 
-config = "0.9"
+config = "0.10"
 lazy_static = "1.4.0"
 num_cpus = "1.13.0"
 
@@ -45,8 +45,8 @@ pow_sha256 = "0.2.1"
 
 futures = "0.3"
 
-validator = "0.10"
-validator_derive = "0.10"
+validator = "0.12"
+validator_derive = "0.12"
 
 ammonia="3"
 

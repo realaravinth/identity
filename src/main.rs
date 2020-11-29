@@ -24,6 +24,7 @@ extern crate lazy_static;
 #[macro_use]
 extern crate serde_derive;
 
+use actix_files::Files;
 use actix_http::cookie::SameSite;
 use actix_http::Error;
 use actix_identity::{CookieIdentityPolicy, IdentityService};
@@ -74,7 +75,7 @@ async fn main() -> std::io::Result<()> {
         create_app()
             .wrap(Compress::default())
             .data(database_connection_pool.clone())
-            //.service(Files::new("/", "./frontend/dist").index_file("signin.html"))
+            .service(Files::new("/", "./frontend/dist").index_file("signin.html"))
             //
             .wrap(Logger::default())
     })
@@ -130,6 +131,10 @@ pub fn create_app() -> App<
     >,
     actix_http::body::Body,
 > {
+    use actix::prelude::*;
+    use pow::Counter;
+
+    let addr = Counter::default().start();
     App::new()
         .configure(pow::handlers::services)
         .configure(users::registration::handlers::services)
@@ -137,4 +142,5 @@ pub fn create_app() -> App<
         .app_data(get_json_err())
         .wrap(get_cookie())
         .wrap(get_identity_service())
+        .data(addr.clone())
 }
