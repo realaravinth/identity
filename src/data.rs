@@ -43,7 +43,7 @@ impl Default for Data {
         Data {
             pool: get_connection_pool(),
             counter_addr: Counter::default().start(),
-            redis_addr,
+            redis_addr: redis_addr.to_owned(),
         }
     }
 }

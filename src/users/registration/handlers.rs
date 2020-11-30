@@ -110,6 +110,8 @@ mod tests {
 
         let mut response = test::call_service(&mut app, req).await;
 
+        println!("{}", response.status());
+
         assert!(response.status().is_success(), "pow works");
 
         response = test::call_service(
@@ -168,5 +170,26 @@ mod tests {
         .await;
 
         assert_eq!(response.status(), StatusCode::BAD_REQUEST, "Invalid PoW");
+
+        let mut response = test::call_service(
+            &mut app,
+            test::TestRequest::get().uri("/api/pow").to_request(),
+        )
+        .await;
+
+        assert!(response.status().is_success(), "pow works");
+
+        let cookie = response.response().cookies().next().unwrap().to_owned();
+
+        response = test::call_service(
+            &mut app,
+            test::TestRequest::get()
+                .cookie(cookie.clone())
+                .uri("/api/pow")
+                .to_request(),
+        )
+        .await;
+
+        assert_eq!(response.status(), StatusCode::PAYMENT_REQUIRED, "pow works");
     }
 }
