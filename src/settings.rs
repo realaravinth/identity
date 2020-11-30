@@ -92,11 +92,18 @@ impl Database {
 }
 
 #[derive(Debug, Clone, Deserialize)]
+pub struct Redis {
+    pub hostname: String,
+    pub port: u32,
+}
+
+#[derive(Debug, Clone, Deserialize)]
 pub struct Settings {
     pub debug: bool,
     pub database: Database,
     pub server: Server,
     pub password_difficulty: PasswordDifficulty,
+    pub redis: Redis,
 }
 
 #[cfg(not(tarpaulin_include))]

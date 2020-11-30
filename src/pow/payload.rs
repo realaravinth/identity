@@ -15,8 +15,11 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+use actix::prelude::*;
+use actix_redis::{Command, RedisActor};
 use actix_session::Session;
 use pow_sha256::PoW;
+use redis_async::{resp::RespValue, resp_array};
 
 use crate::errors::{ServiceError, ServiceResult};
 
@@ -25,24 +28,33 @@ use super::DIFFICULTY;
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct PoWConfig {
     pub phrase: String,
-    pub difficulty: u128,
+    pub difficulty: u32,
 }
 
 impl PoWConfig {
-    pub fn new(phrase: &str) -> PoWConfig {
+    pub fn new(phrase: &str, difficulty: u32) -> PoWConfig {
         // TODO: Move difficulty into app state(?)
         // ultimately, difficulty should be adjusted according to
         // server load
         PoWConfig {
-            difficulty: DIFFICULTY,
+            difficulty,
             phrase: phrase.into(),
         }
     }
 
-    pub fn verify_pow(session: &Session, pow: &PoW<Vec<u8>>) -> ServiceResult<()> {
+    pub async fn verify_pow(
+        session: &Session,
+        pow: &PoW<Vec<u8>>,
+        redis_addr: &Addr<RedisActor>,
+    ) -> ServiceResult<()> {
         let session_id = session.get::<String>("PoW")?;
         if let Some(id) = session_id {
-            if pow.is_sufficient_difficulty(DIFFICULTY)
+            let difficulty = get_difficulty(redis_addr, &id).await?;
+            debug!(
+                "PoW is sufficient difficulty: {}",
+                pow.is_sufficient_difficulty(difficulty)
+            );
+            if pow.is_sufficient_difficulty(difficulty)
                 && pow.is_valid_proof(&id.as_bytes().to_vec())
             {
                 Ok(())
@@ -52,6 +64,22 @@ impl PoWConfig {
         } else {
             Err(ServiceError::PoWRequired)
         }
+    }
+}
+
+pub async fn get_difficulty(redis_addr: &Addr<RedisActor>, id: &str) -> ServiceResult<u128> {
+    let difficulty = redis_addr
+        .send(Command(resp_array!["GET", id]))
+        .await
+        .unwrap()
+        .unwrap();
+    if let RespValue::BulkString(val) = difficulty {
+        let difficulty_factor: u128 = String::from_utf8(val).unwrap().parse().unwrap();
+        let difficulty = u128::max_value() - u128::max_value() / difficulty_factor as u128;
+        debug!("difficulty: {}", difficulty);
+        Ok(difficulty)
+    } else {
+        Err(ServiceError::InternalServerError)
     }
 }
 

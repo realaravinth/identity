@@ -13,6 +13,10 @@ username = "postgres"
 password = "password"
 name = "postgres"
 
+[redis]
+hostname = "localhost"
+port = 6379
+
 [server]
 # This section deals with the configuration of the actual server
 

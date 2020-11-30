@@ -53,6 +53,8 @@ use users::BLACKLIST;
 use users::PROFAINITY;
 use users::USERNAME_CASE_MAPPED;
 
+pub const POW_SESSION_DURATION: u64 = 60;
+
 lazy_static! {
     pub static ref SETTINGS: Settings = Settings::new().expect("couldn't load settings");
     pub static ref RE_BLACKLIST: Regex =
@@ -78,7 +80,6 @@ async fn main() -> std::io::Result<()> {
             .wrap(Compress::default())
             .data(data.clone())
             .service(Files::new("/", "./frontend/dist").index_file("signin.html"))
-            //
             .wrap(Logger::default())
     })
     .bind(format!(
@@ -117,6 +118,7 @@ pub fn get_cookie() -> CookieSession {
         .domain(&SETTINGS.server.domain)
         .name("pow")
         .same_site(SameSite::Strict)
+        .max_age(POW_SESSION_DURATION as i64)
         .path("/")
         .secure(false) //TODO change dynamically between true and false
                        //                    based on mode=DEVEL

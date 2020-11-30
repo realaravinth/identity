@@ -20,20 +20,20 @@ use lazy_static::*;
 use std::time::Duration;
 
 use super::Levels;
-
-const POW_SESSION_DURATION: u64 = 20;
+use crate::POW_SESSION_DURATION;
 
 lazy_static! {
     pub static ref DURATION: Duration = Duration::new(POW_SESSION_DURATION, 0);
 }
 
+/// Add visitor message
 #[derive(Message)]
 #[rtype(result = "u32")]
 pub struct Visitor;
 
 #[derive(Message)]
 #[rtype(result = "()")]
-pub struct DeleteVisitor;
+struct DeleteVisitor;
 
 pub struct Counter {
     visitor_count: usize,

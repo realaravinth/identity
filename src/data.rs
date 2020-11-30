@@ -16,24 +16,34 @@
 */
 
 use actix::prelude::*;
+use actix_redis::{Command, RedisActor};
 use deadpool_postgres::Pool;
+use redis_async::{resp::RespValue, resp_array};
 
 use crate::database::get_connection_pool;
 use crate::pow::Counter;
+use crate::SETTINGS;
 
 #[cfg(not(tarpaulin_include))]
 #[derive(Clone)]
 pub struct Data {
     pub pool: Pool,
     pub counter_addr: Addr<Counter>,
+    pub redis_addr: Addr<RedisActor>,
 }
 
 #[cfg(not(tarpaulin_include))]
 impl Default for Data {
     fn default() -> Self {
+        let redis_addr = RedisActor::start(format!(
+            "{}:{}",
+            SETTINGS.redis.hostname, SETTINGS.redis.port
+        ));
+
         Data {
             pool: get_connection_pool(),
             counter_addr: Counter::default().start(),
+            redis_addr,
         }
     }
 }

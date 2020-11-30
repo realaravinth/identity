@@ -29,7 +29,7 @@ pub async fn sign_up(
     creds: web::Json<UnvalidatedRegisterCreds>,
     data: web::Data<Data>,
 ) -> ServiceResult<impl Responder> {
-    PoWConfig::verify_pow(&session, &creds.pow)?;
+    PoWConfig::verify_pow(&session, &creds.pow, &data.redis_addr).await?;
     let processed_creds: User = creds.process()?.into();
     let new_user = processed_creds.add_user(&data.into_inner().pool).await?;
     debug!("{:?}", new_user);
@@ -51,9 +51,11 @@ mod tests {
         test,
     };
 
+    use crate::pow::Visitor;
     use pow_sha256::PoW;
     use serde_json;
 
+    use crate::pow::get_difficulty;
     use crate::pow::DIFFICULTY;
 
     #[derive(Deserialize, Debug)]
@@ -65,7 +67,6 @@ mod tests {
 
     #[actix_rt::test]
     async fn sign_up_works() {
-        let data = Data::default();
         let mut app = test::init_service(crate::create_app().data(DATA.clone())).await;
 
         let response = test::call_service(
@@ -85,7 +86,11 @@ mod tests {
         let value: pow = serde_json::from_str(a[1]).unwrap();
         let pow_val: Vec<&str> = value.PoW.split('"').collect();
 
-        let pow = PoW::prove_work(&pow_val[1].as_bytes().to_vec(), DIFFICULTY).unwrap();
+        let pow_secret = &pow_val[1];
+
+        let difficulty = u128::max_value() - u128::max_value() / 100_000;
+
+        let pow = PoW::prove_work(&pow_secret.as_bytes().to_vec(), difficulty).unwrap();
 
         let random_username: String = "asdfasdf".into();
         let payload = serde_json::to_string(&UnvalidatedRegisterCreds {

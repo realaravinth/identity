@@ -20,8 +20,8 @@ pub mod handlers;
 mod levels;
 mod payload;
 
-pub use counter::Counter;
-pub use payload::PoWConfig;
+pub use counter::{Counter, Visitor};
+pub use payload::{get_difficulty, PoWConfig};
 
 use levels::Levels;
 
