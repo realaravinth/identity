@@ -36,10 +36,10 @@ pub async fn sign_in(
 
 #[post("/api/signout")]
 pub async fn sign_out(id: Identity) -> ServiceResult<impl Responder> {
-    id.forget();
-    Ok(HttpResponse::Ok()
-        .content_type("text/html")
-        .body("You are successfully signed out"))
+    if let Some(_) = id.identity() {
+        id.forget();
+    }
+    Ok(HttpResponse::Ok())
 }
 
 pub fn services(cfg: &mut web::ServiceConfig) {
@@ -140,15 +140,27 @@ mod tests {
         })
         .unwrap();
 
-        let username_doesnt_exist = serde_json::to_string(&LoginCreds {
-            username: "aaaa".into(),
-            password: PASSWORD.into(),
-        })
-        .unwrap();
+        let req = test::TestRequest::post()
+            .uri("/api/signin")
+            .header(header::CONTENT_TYPE, "application/json")
+            .set_payload(payload)
+            .to_request();
 
-        let worng_password = serde_json::to_string(&LoginCreds {
+        let response = test::call_service(&mut app, req).await;
+
+        println!("{}", response.status());
+
+        assert!(response.status().is_success(), "signin works");
+    }
+
+    #[actix_rt::test]
+    async fn sign_out() {
+        let data = Data::default();
+        let mut app = test::init_service(crate::create_app().data(data.clone())).await;
+
+        let payload = serde_json::to_string(&LoginCreds {
             username: USERNAME.into(),
-            password: "aaa".into(),
+            password: PASSWORD.into(),
         })
         .unwrap();
 
@@ -158,21 +170,19 @@ mod tests {
             .set_payload(payload)
             .to_request();
 
-        let mut response = test::call_service(&mut app, req).await;
+        let response = test::call_service(&mut app, req).await;
 
-        println!("{}", response.status());
-
-        assert!(response.status().is_success(), "pow works");
+        let cookie = response.response().cookies().next().unwrap().to_owned();
 
         let req = test::TestRequest::post()
-            .uri("/api/signin")
-            .header(header::CONTENT_TYPE, "application/json")
-            .set_payload(username_doesnt_exist)
+            .uri("/api/signout")
+            .cookie(cookie)
             .to_request();
 
-        let mut response = test::call_service(&mut app, req).await;
+        let response = test::call_service(&mut app, req).await;
 
-        assert_eq!(response.status(), StatusCode::BAD_REQUEST, "signin works");
+        println!("response: {}", response.status());
+        assert!(response.status().is_success(), "sign out works");
     }
 
     #[actix_rt::test]

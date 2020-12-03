@@ -73,7 +73,6 @@ jobs:
           args: --all --bins --examples --tests
 
       - name: Run migrations
-        if: matrix.version == 'stable' && (github.ref == 'refs/heads/master' || github.event_name == 'pull_request')
         uses: actions-rs/cargo@v1
         with:
           command: run
@@ -89,7 +88,6 @@ jobs:
           args: --all --release --all-features --no-fail-fast -- --nocapture
 
       - name: Run migrations
-        if: matrix.version == 'stable' && (github.ref == 'refs/heads/master' || github.event_name == 'pull_request')
         uses: actions-rs/cargo@v1
         with:
           command: run

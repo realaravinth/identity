@@ -1,5 +1,5 @@
 [package]
-name = "authentication"
+name = "identity"
 version = "0.1.0"
 authors = ["realaravinth <realaravinth@batsense.net>"]
 edition = "2018"
@@ -10,7 +10,7 @@ edition = "2018"
 members = [ ".", "pow" ]
 
 [[bin]]
-name = "authentication"
+name = "identity"
 path = "src/main.rs"
 
 [[bin]]

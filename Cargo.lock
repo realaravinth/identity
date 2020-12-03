@@ -502,48 +502,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "authentication"
-version = "0.1.0"
-dependencies = [
- "actix",
- "actix-files",
- "actix-http",
- "actix-identity",
- "actix-redis",
- "actix-rt",
- "actix-service",
- "actix-session",
- "actix-web",
- "ammonia",
- "config",
- "deadpool",
- "deadpool-postgres",
- "derive_more",
- "futures",
- "lazy_static",
- "log",
- "num_cpus",
- "pow_sha256",
- "pretty_env_logger",
- "rand",
- "redis-async",
- "regex",
- "rust-argon2",
- "serde 1.0.117",
- "serde_derive",
- "serde_json",
- "thiserror",
- "tokio-pg-mapper",
- "tokio-pg-mapper-derive",
- "tokio-postgres",
- "unicode-normalization",
- "url",
- "uuid",
- "validator",
- "validator_derive",
-]
-
-[[package]]
 name = "autocfg"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1367,6 +1325,48 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "df004cfca50ef23c36850aaaa59ad52cc70d0e90243c3c7737a4dd32dc7a3c4f"
 dependencies = [
  "quick-error",
+]
+
+[[package]]
+name = "identity"
+version = "0.1.0"
+dependencies = [
+ "actix",
+ "actix-files",
+ "actix-http",
+ "actix-identity",
+ "actix-redis",
+ "actix-rt",
+ "actix-service",
+ "actix-session",
+ "actix-web",
+ "ammonia",
+ "config",
+ "deadpool",
+ "deadpool-postgres",
+ "derive_more",
+ "futures",
+ "lazy_static",
+ "log",
+ "num_cpus",
+ "pow_sha256",
+ "pretty_env_logger",
+ "rand",
+ "redis-async",
+ "regex",
+ "rust-argon2",
+ "serde 1.0.117",
+ "serde_derive",
+ "serde_json",
+ "thiserror",
+ "tokio-pg-mapper",
+ "tokio-pg-mapper-derive",
+ "tokio-postgres",
+ "unicode-normalization",
+ "url",
+ "uuid",
+ "validator",
+ "validator_derive",
 ]
 
 [[package]]

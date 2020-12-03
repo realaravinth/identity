@@ -26,13 +26,13 @@ $ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 - Clone the repository with:
 
 ```
-$ git clone https://github.com/shuttlecraft/authentication
+$ git clone https://github.com/shuttlecraft/identity
 ```
 
 - Build with Cargo:
 
 ```
-$ cd authentication && cargo build
+$ cd identity && cargo build
 ```
 
 ### Usage
