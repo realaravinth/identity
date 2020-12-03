@@ -35,10 +35,9 @@ pub struct Data {
 #[cfg(not(tarpaulin_include))]
 impl Default for Data {
     fn default() -> Self {
-        let redis_addr = RedisActor::start(format!(
-            "{}:{}",
-            SETTINGS.redis.hostname, SETTINGS.redis.port
-        ));
+        let redis_url = SETTINGS.redis.get_url();
+        info!("Connecting to Redis at {}", &redis_url);
+        let redis_addr = RedisActor::start(redis_url);
 
         Data {
             pool: get_connection_pool(),

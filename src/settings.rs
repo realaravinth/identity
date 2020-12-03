@@ -33,7 +33,7 @@ pub struct Server {
     // TODO yet to be configured
     pub allow_registration: bool,
     pub port: u32,
-    pub host: String,
+    pub ip: String,
     pub domain: String,
     pub cookie_secret: String,
     pub profanity_filter: bool,
@@ -93,8 +93,14 @@ impl Database {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Redis {
-    pub hostname: String,
     pub port: u32,
+    pub hostname: String,
+}
+
+impl Redis {
+    pub fn get_url(&self) -> String {
+        format!("{}:{}", self.hostname, self.port)
+    }
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -129,9 +135,7 @@ impl Settings {
 
         s.merge(File::with_name(&format!("config/{}", env)).required(false))?;
 
-        s.merge(File::with_name("config/local").required(false))?;
-
-        s.merge(Environment::with_prefix("AUTH"))?;
+        s.merge(Environment::with_prefix("IDENTITY"))?;
 
         match env::var("PORT") {
             Ok(val) => {

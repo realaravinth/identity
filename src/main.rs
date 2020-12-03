@@ -82,13 +82,10 @@ async fn main() -> std::io::Result<()> {
             .service(Files::new("/", "./frontend/dist").index_file("signin.html"))
             .wrap(Logger::default())
     })
-    .bind(format!(
-        "{}:{}",
-        &SETTINGS.server.host, &SETTINGS.server.port
-    ))
+    .bind(format!("{}:{}", &SETTINGS.server.ip, &SETTINGS.server.port))
     .expect(&format!(
         "Couldn't bind to IP address: {} and port: {}, are they avaiable?",
-        &SETTINGS.server.host, &SETTINGS.server.port
+        &SETTINGS.server.ip, &SETTINGS.server.port
     ))
     .run()
     .await
