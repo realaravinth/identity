@@ -81,16 +81,12 @@ impl ResponseError for ServiceError {
 
 impl From<PGMError> for ServiceError {
     fn from(_: PGMError) -> ServiceError {
-        // Right now we just care about UniqueViolation from diesel
-        // But this would be helpful to easily map errors as our app grows
         ServiceError::InternalServerError
     }
 }
 
 impl From<PGBError> for ServiceError {
     fn from(error: PGBError) -> ServiceError {
-        // Right now we just care about UniqueViolation from diesel
-        // But this would be helpful to easily map errors as our app grows
         if error == PGBError::UNIQUE_VIOLATION {
             ServiceError::UsernameExists
         } else {

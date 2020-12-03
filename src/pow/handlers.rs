@@ -63,31 +63,32 @@ pub fn services(cfg: &mut ServiceConfig) {
 mod tests {
     use actix_web::{http::StatusCode, test};
 
-    use crate::test::DATA;
+    use crate::Data;
 
-    //    #[actix_rt::test]
-    //    async fn get_pow_works() {
-    //        let mut app = test::init_service(crate::create_app().data(DATA.clone())).await;
-    //
-    //        let mut response = test::call_service(
-    //            &mut app,
-    //            test::TestRequest::get().uri("/api/pow").to_request(),
-    //        )
-    //        .await;
-    //
-    //        assert!(response.status().is_success(), "pow works");
-    //
-    //        let cookie = response.response().cookies().next().unwrap().to_owned();
-    //
-    //        response = test::call_service(
-    //            &mut app,
-    //            test::TestRequest::get()
-    //                .cookie(cookie.clone())
-    //                .uri("/api/pow")
-    //                .to_request(),
-    //        )
-    //        .await;
-    //
-    //        assert_eq!(response.status(), StatusCode::PAYMENT_REQUIRED, "pow works");
-    //    }
+    #[actix_rt::test]
+    async fn get_pow_works() {
+        let data = Data::default();
+        let mut app = test::init_service(crate::create_app().data(data.clone())).await;
+
+        let mut response = test::call_service(
+            &mut app,
+            test::TestRequest::get().uri("/api/pow").to_request(),
+        )
+        .await;
+
+        assert!(response.status().is_success(), "pow works");
+
+        let cookie = response.response().cookies().next().unwrap().to_owned();
+
+        response = test::call_service(
+            &mut app,
+            test::TestRequest::get()
+                .cookie(cookie.clone())
+                .uri("/api/pow")
+                .to_request(),
+        )
+        .await;
+
+        assert_eq!(response.status(), StatusCode::PAYMENT_REQUIRED, "pow works");
+    }
 }

@@ -66,11 +66,11 @@ jobs:
           profile: minimal
           override: true
 
-      - name: Install diesel cli
-        run: cargo install diesel_cli --no-default-features --features postgres
-
       - name: Run migrations
-        run: diesel migration run
+        uses: actions-rs/cargo@v1
+        with:
+          command: run
+          args: --bin test-setup
         env:
           DATABASE_URL: postgres://postgres:password@localhost:5432/postgres
 
@@ -80,6 +80,14 @@ jobs:
           command: check
           args: --all --bins --examples --tests
 
+      - name: Run migrations
+        uses: actions-rs/cargo@v1
+        with:
+          command: run
+          args: --bin test-setup
+        env:
+          DATABASE_URL: postgres://postgres:password@localhost:5432/postgres
+
       - name: tests
         uses: actions-rs/cargo@v1
         timeout-minutes: 40
@@ -88,7 +96,10 @@ jobs:
           args: --all --release --all-features --no-fail-fast -- --nocapture
 
       - name: Run migrations
-        run: diesel migration redo
+        uses: actions-rs/cargo@v1
+        with:
+          command: run
+          args: --bin test-setup
         env:
           DATABASE_URL: postgres://postgres:password@localhost:5432/postgres
 

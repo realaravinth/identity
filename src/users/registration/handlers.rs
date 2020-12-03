@@ -47,7 +47,7 @@ mod tests {
     use super::*;
 
     use actix_web::{
-        http::{header, StatusCode},
+        http::{header, Cookie, StatusCode},
         test,
     };
 
@@ -65,9 +65,40 @@ mod tests {
 
     use crate::test::DATA;
 
+    //    async fn pow_helper() -> Cookie {
+    //        let data = Data::default();
+    //        let mut app = test::init_service(crate::create_app().data(data.clone())).await;
+    //
+    //        let response = test::call_service(
+    //            &mut app,
+    //            test::TestRequest::get().uri("/api/pow").to_request(),
+    //        )
+    //        .await;
+    //
+    //        // This statement borrows response(var name)
+    //        // So can't extract the returned json with read_body_json()
+    //        let cookie = response.response().cookies().next().unwrap().to_owned();
+    //
+    //        let difficulty = u128::max_value() - u128::max_value() / 100_000;
+    //        let pow_secret = get_cookie(&cookie);
+    //        let pow = PoW::prove_work(&pow_secret.as_bytes().to_vec(), difficulty).unwrap();
+    //
+    //        cookie
+    //    }
+
+    fn get_cookie(cookie: &Cookie) -> String {
+        let value: String = cookie.value().into();
+        let a: Vec<&str> = value.split('=').collect();
+        let value: pow = serde_json::from_str(a[1]).unwrap();
+        let pow_val: Vec<&str> = value.PoW.split('"').collect();
+
+        pow_val[1].to_string()
+    }
+
     #[actix_rt::test]
     async fn sign_up_works() {
-        let mut app = test::init_service(crate::create_app().data(DATA.clone())).await;
+        let data = Data::default();
+        let mut app = test::init_service(crate::create_app().data(data.clone())).await;
 
         let response = test::call_service(
             &mut app,
@@ -79,14 +110,16 @@ mod tests {
         // So can't extract the returned json with read_body_json()
         let cookie = response.response().cookies().next().unwrap().to_owned();
 
-        // So had to implement a hackish cookie parser like
-        // that of Session::get(from actix_session)
-        let value: String = cookie.value().into();
-        let a: Vec<&str> = value.split('=').collect();
-        let value: pow = serde_json::from_str(a[1]).unwrap();
-        let pow_val: Vec<&str> = value.PoW.split('"').collect();
+        let pow_secret = get_cookie(&cookie);
 
-        let pow_secret = &pow_val[1];
+        //        // So had to implement a hackish cookie parser like
+        //        // that of Session::get(from actix_session)
+        //        let value: String = cookie.value().into();
+        //        let a: Vec<&str> = value.split('=').collect();
+        //        let value: pow = serde_json::from_str(a[1]).unwrap();
+        //        let pow_val: Vec<&str> = value.PoW.split('"').collect();
+        //
+        //        let pow_secret = &pow_val[1];
 
         let difficulty = u128::max_value() - u128::max_value() / 100_000;
 
@@ -113,8 +146,34 @@ mod tests {
         println!("{}", response.status());
 
         assert!(response.status().is_success(), "pow works");
+    }
 
-        response = test::call_service(
+    #[actix_rt::test]
+    async fn duplicate_username() {
+        let mut app = test::init_service(crate::create_app().data(DATA.clone())).await;
+        let random_username = "batman".to_string();
+
+        let response = test::call_service(
+            &mut app,
+            test::TestRequest::get().uri("/api/pow").to_request(),
+        )
+        .await;
+
+        let cookie = response.response().cookies().next().unwrap().to_owned();
+        let pow_secret = get_cookie(&cookie);
+
+        let difficulty = u128::max_value() - u128::max_value() / 100_000;
+        let pow = PoW::prove_work(&pow_secret.as_bytes().to_vec(), difficulty).unwrap();
+
+        let payload = serde_json::to_string(&UnvalidatedRegisterCreds {
+            username: random_username.clone(),
+            password: "asdfa".into(),
+            email_id: Some("example@example.com".into()),
+            pow,
+        })
+        .unwrap();
+
+        let resp = test::call_service(
             &mut app,
             test::TestRequest::post()
                 .cookie(cookie.clone())
@@ -126,12 +185,12 @@ mod tests {
         .await;
 
         assert_eq!(
-            response.status(),
+            resp.status(),
             StatusCode::METHOD_NOT_ALLOWED,
             "username exists works"
         );
 
-        response = test::call_service(
+        let res = test::call_service(
             &mut app,
             test::TestRequest::post()
                 .uri("/api/signup")
@@ -141,14 +200,10 @@ mod tests {
         )
         .await;
 
-        assert_eq!(
-            response.status(),
-            StatusCode::PAYMENT_REQUIRED,
-            "PoW required"
-        );
+        assert_eq!(res.status(), StatusCode::PAYMENT_REQUIRED, "PoW required");
 
         let wrong_pow =
-            PoW::prove_work(&pow_val[0].as_bytes().to_vec(), DIFFICULTY / 100_00).unwrap();
+            PoW::prove_work(&"aaaaaa".as_bytes().to_vec(), DIFFICULTY / 100_00).unwrap();
 
         let wrong_pow_payload = serde_json::to_string(&UnvalidatedRegisterCreds {
             username: random_username,
@@ -158,7 +213,7 @@ mod tests {
         })
         .unwrap();
 
-        response = test::call_service(
+        let r = test::call_service(
             &mut app,
             test::TestRequest::post()
                 .uri("/api/signup")
@@ -169,27 +224,6 @@ mod tests {
         )
         .await;
 
-        assert_eq!(response.status(), StatusCode::BAD_REQUEST, "Invalid PoW");
-
-        let mut response = test::call_service(
-            &mut app,
-            test::TestRequest::get().uri("/api/pow").to_request(),
-        )
-        .await;
-
-        assert!(response.status().is_success(), "pow works");
-
-        let cookie = response.response().cookies().next().unwrap().to_owned();
-
-        response = test::call_service(
-            &mut app,
-            test::TestRequest::get()
-                .cookie(cookie.clone())
-                .uri("/api/pow")
-                .to_request(),
-        )
-        .await;
-
-        assert_eq!(response.status(), StatusCode::PAYMENT_REQUIRED, "pow works");
+        assert_eq!(r.status(), StatusCode::BAD_REQUEST, "Invalid PoW");
     }
 }

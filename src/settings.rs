@@ -117,6 +117,10 @@ impl Settings {
         s.set_default("database.pool", num_cpus::get().to_string())
             .expect("Couldn't get the number of CPUs");
 
+        #[cfg(test)]
+        s.set_default("database.pool", 2.to_string())
+            .expect("Couldn't get the number of CPUs");
+
         // merging default config from file
         s.merge(File::with_name("config/default"))?;
 
