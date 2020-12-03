@@ -17,6 +17,10 @@
 use crate::Data;
 
 #[cfg(test)]
+pub static USERNAME: &str = "batman";
+pub static PASSWORD: &str = "password";
+pub static EMAIL: &str = "batman@we.com";
+
 #[cfg(test)]
 lazy_static! {
     pub static ref DATA: Data = Data::default();

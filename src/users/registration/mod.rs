@@ -17,7 +17,7 @@
 
 mod actions;
 pub mod handlers;
-mod models;
-mod payload;
+pub mod models;
+pub mod payload;
 
 use super::{beep, filter, forbidden};

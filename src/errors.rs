@@ -31,6 +31,8 @@ use std::convert::From;
 pub enum ServiceError {
     #[error("some characters are not permitted")] //405j
     UsernameError,
+    #[error("User doesn't exist")]
+    UserDoesntExist,
     #[error("username exists")] //405
     UsernameExists,
     #[error("invalid credentials")]
@@ -74,6 +76,7 @@ impl ResponseError for ServiceError {
             ServiceError::PoWRequired => StatusCode::PAYMENT_REQUIRED,
             ServiceError::PoWInvalid => StatusCode::BAD_REQUEST,
             ServiceError::NotAnEmail => StatusCode::BAD_REQUEST,
+            ServiceError::UserDoesntExist => StatusCode::BAD_REQUEST,
             ServiceError::AccountDoesntExist => StatusCode::BAD_REQUEST,
         }
     }

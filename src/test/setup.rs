@@ -25,9 +25,17 @@ mod database;
 #[path = "../settings.rs"]
 mod settings;
 
+#[path = "../errors.rs"]
+mod errors;
+
 //use data::Data;
 use database::get_connection_pool;
 use settings::Settings;
+
+static USERNAME: &str = "a";
+static PASSWORD: &str = "password";
+static HASH: &str = "$argon2i$v=19$m=656,t=5,p=12$b0p3MnZIbDRwRzUzTDRhZW9weWpBWFc5ZkxUREN5eGE$57mYgK/vkOFFlbh1QMttQ1eBUrbkYdPawmkmQwevziw";
+static EMAIL: &str = "batman@we.com";
 
 lazy_static! {
     pub static ref SETTINGS: Settings = Settings::new().expect("couldn't load settings");
@@ -42,8 +50,10 @@ async fn main() {
     pretty_env_logger::init();
 
     let client: Client = pool.get().await.unwrap();
-    let up_command = client.prepare(&up_statement).await.unwrap();
 
+    // crating tables
+    info!("Creating tables");
+    let up_command = client.prepare(&up_statement).await.unwrap();
     let down_command = client.prepare(&down_statement).await.unwrap();
 
     let table = client.execute(&up_command, &[]).await;
@@ -57,4 +67,15 @@ async fn main() {
             }
         }
     }
+
+    // creating dummy user
+    info!("Creating dummy users");
+
+    let create_user_statement = format!(
+        "INSERT INTO users(username, email_id, password) values('{}','{}','{}')",
+        USERNAME, EMAIL, HASH
+    );
+    let create_user_command = client.prepare(&create_user_statement).await.unwrap();
+
+    client.execute(&create_user_command, &[]).await;
 }
