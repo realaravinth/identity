@@ -1370,6 +1370,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "identity-cli"
+version = "0.1.0"
+dependencies = [
+ "actix-rt",
+ "config",
+ "deadpool",
+ "deadpool-postgres",
+ "lazy_static",
+ "log",
+ "num_cpus",
+ "pretty_env_logger",
+ "rand",
+ "serde 1.0.117",
+ "serde_derive",
+ "serde_json",
+ "tokio-pg-mapper",
+ "tokio-pg-mapper-derive",
+ "tokio-postgres",
+ "url",
+]
+
+[[package]]
 name = "idna"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

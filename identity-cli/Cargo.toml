@@ -1,0 +1,30 @@
+[package]
+name = "identity-cli"
+version = "0.1.0"
+authors = ["realaravinth <realaravinth@batsense.net>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-rt = "1"
+pretty_env_logger = "0.4.0"
+log = "0.4.11"
+
+rand = "0.7.3"
+
+serde = "1.0.114"
+serde_derive = "1.0.114"
+serde_json = "1"
+
+config = "0.10"
+lazy_static = "1.4.0"
+num_cpus = "1.13.0"
+
+tokio-pg-mapper = "0.1.8"
+tokio-pg-mapper-derive = "0.1.5"
+tokio-postgres = "0.5"
+deadpool-postgres = "0.5"
+deadpool = "0.5"
+
+url = "2"
