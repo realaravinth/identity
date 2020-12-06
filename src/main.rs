@@ -41,6 +41,7 @@ use regex::Regex;
 mod data;
 mod database;
 mod errors;
+mod oauth;
 mod pow;
 mod settings;
 #[cfg(test)]
@@ -136,6 +137,7 @@ pub fn create_app() -> App<
         .configure(pow::handlers::services)
         .configure(users::registration::handlers::services)
         .configure(users::authentication::handlers::services)
+        .configure(oauth::services)
         .app_data(get_json_err())
         .wrap(get_cookie())
         .wrap(get_identity_service())

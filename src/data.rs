@@ -21,6 +21,7 @@ use deadpool_postgres::Pool;
 use redis_async::{resp::RespValue, resp_array};
 
 use crate::database::get_connection_pool;
+use crate::oauth::state::State;
 use crate::pow::Counter;
 use crate::SETTINGS;
 
@@ -30,6 +31,7 @@ pub struct Data {
     pub pool: Pool,
     pub counter_addr: Addr<Counter>,
     pub redis_addr: Addr<RedisActor>,
+    pub oauth_state: Addr<State>,
 }
 
 #[cfg(not(tarpaulin_include))]
@@ -38,11 +40,13 @@ impl Default for Data {
         let redis_url = SETTINGS.redis.get_url();
         info!("Connecting to Redis at {}", &redis_url);
         let redis_addr = RedisActor::start(redis_url);
+        let oauth_state = State::preconfigured().start();
 
         Data {
             pool: get_connection_pool(),
             counter_addr: Counter::default().start(),
             redis_addr: redis_addr.to_owned(),
+            oauth_state,
         }
     }
 }

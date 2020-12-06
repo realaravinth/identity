@@ -12,6 +12,7 @@ module.exports = {
     new CopyWebpackPlugin(['index.html']),
     new CopyWebpackPlugin(['signup.html']),
     new CopyWebpackPlugin(['signin.html']),
-    new CopyWebpackPlugin(['main.css'])
+    new CopyWebpackPlugin(['main.css']),
+    new CopyWebpackPlugin(['./favicon/favicon.ico'])
   ],
 };

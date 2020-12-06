@@ -22,7 +22,7 @@ use tokio_pg_mapper::FromTokioPostgresRow;
 use tokio_pg_mapper_derive::PostgresMapper;
 
 use super::payload::RegisterCreds;
-use crate::errors::*;
+use crate::errors::{ServiceError, ServiceResult};
 
 #[derive(Debug, Deserialize, Serialize, PostgresMapper)]
 #[pg_mapper(table = "users")]

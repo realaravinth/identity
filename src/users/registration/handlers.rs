@@ -30,6 +30,7 @@ pub async fn sign_up(
     data: web::Data<Data>,
 ) -> ServiceResult<impl Responder> {
     PoWConfig::verify_pow(&session, &creds.pow, &data.redis_addr).await?;
+
     let processed_creds: User = creds.process()?.into();
     let new_user = processed_creds.add_user(&data.into_inner().pool).await?;
     debug!("{:?}", new_user);

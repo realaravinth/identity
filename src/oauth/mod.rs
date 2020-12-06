@@ -15,19 +15,7 @@
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-use deadpool_postgres::{Config, ManagerConfig, Pool, RecyclingMethod};
-use tokio_postgres::NoTls;
+mod handlers;
+pub mod state;
 
-use crate::SETTINGS;
-
-#[cfg(not(tarpaulin_include))]
-pub fn get_connection_pool() -> Pool {
-    let config = SETTINGS.database.clone();
-
-    let mut pg_config: Config = config.into();
-    let mgr_config = ManagerConfig {
-        recycling_method: RecyclingMethod::Fast,
-    };
-    pg_config.manager = Some(mgr_config);
-    pg_config.create_pool(NoTls).unwrap()
-}
+pub use handlers::services;

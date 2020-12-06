@@ -76,7 +76,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: run
-          args: --package identity-cli
+          args: --bin identity-cli
         env:
           DATABASE_URL: postgres://postgres:password@localhost:5432/postgres
 
@@ -91,7 +91,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: run
-          args: --package identity-cli
+          args: --bin identity-cli
         env:
           DATABASE_URL: postgres://postgres:password@localhost:5432/postgres
 

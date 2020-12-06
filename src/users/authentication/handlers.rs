@@ -50,10 +50,9 @@ pub fn services(cfg: &mut web::ServiceConfig) {
 mod tests {
     use super::*;
 
-    use actix_web::{
-        http::{header, Cookie, StatusCode},
-        test,
-    };
+    use actix_web::http::{header, Cookie, StatusCode};
+
+    use actix_web::test;
 
     use crate::pow::Visitor;
     use pow_sha256::PoW;

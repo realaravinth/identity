@@ -717,6 +717,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "chrono"
+version = "0.4.19"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "670ad68c9088c2a963aaa298cb369688cf3f9465ce5e2d4ca10e6e0098a1ce73"
+dependencies = [
+ "libc",
+ "num-integer",
+ "num-traits 0.2.14",
+ "time 0.1.44",
+ "winapi 0.3.9",
+]
+
+[[package]]
 name = "cipher"
 version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1349,6 +1362,8 @@ dependencies = [
  "lazy_static",
  "log",
  "num_cpus",
+ "oxide-auth",
+ "oxide-auth-actix",
  "pow_sha256",
  "pretty_env_logger",
  "rand",
@@ -1367,28 +1382,6 @@ dependencies = [
  "uuid",
  "validator",
  "validator_derive",
-]
-
-[[package]]
-name = "identity-cli"
-version = "0.1.0"
-dependencies = [
- "actix-rt",
- "config",
- "deadpool",
- "deadpool-postgres",
- "lazy_static",
- "log",
- "num_cpus",
- "pretty_env_logger",
- "rand",
- "serde 1.0.117",
- "serde_derive",
- "serde_json",
- "tokio-pg-mapper",
- "tokio-pg-mapper-derive",
- "tokio-postgres",
- "url",
 ]
 
 [[package]]
@@ -1731,6 +1724,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "num-integer"
+version = "0.1.44"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d2cc698a63b549a70bc047073d2949cce27cd1c7b0a4a862d08a8031bc2801db"
+dependencies = [
+ "autocfg",
+ "num-traits 0.2.14",
+]
+
+[[package]]
 name = "num-traits"
 version = "0.1.43"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1781,6 +1784,41 @@ name = "opaque-debug"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "624a8340c38c1b80fd549087862da4ba43e08858af025b236e509b6649fc13d5"
+
+[[package]]
+name = "oxide-auth"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2fbb16adb660789c7c2d1181e2f7637174e6b956acade1d688641f28d4f18f06"
+dependencies = [
+ "base64 0.12.3",
+ "chrono",
+ "hmac 0.9.0",
+ "once_cell",
+ "rand",
+ "rmp-serde",
+ "rust-argon2",
+ "serde 1.0.117",
+ "serde_derive",
+ "serde_json",
+ "sha2 0.9.2",
+ "subtle",
+ "url",
+]
+
+[[package]]
+name = "oxide-auth-actix"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4fa64bc96edf044d90bbf07aae27fe5ec1ccc0ddc6fe9049ae61652030d41dc7"
+dependencies = [
+ "actix",
+ "actix-web",
+ "futures",
+ "oxide-auth",
+ "serde_urlencoded",
+ "url",
+]
 
 [[package]]
 name = "parking_lot"
@@ -2154,6 +2192,27 @@ checksum = "52e44394d2086d010551b14b53b1f24e31647570cd1deb0379e2c21b329aba00"
 dependencies = [
  "hostname",
  "quick-error",
+]
+
+[[package]]
+name = "rmp"
+version = "0.8.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0f10b46df14cf1ee1ac7baa4d2fbc2c52c0622a4b82fa8740e37bc452ac0184f"
+dependencies = [
+ "byteorder",
+ "num-traits 0.2.14",
+]
+
+[[package]]
+name = "rmp-serde"
+version = "0.14.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4ce7d70c926fe472aed493b902010bccc17fa9f7284145cb8772fd22fdb052d8"
+dependencies = [
+ "byteorder",
+ "rmp",
+ "serde 1.0.117",
 ]
 
 [[package]]

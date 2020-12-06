@@ -39,7 +39,7 @@ $ cd identity && cargo build
 
 #### Configuration:
 
-Wagon is highly configurable.
+Identity is highly configurable.
 Configuration is applied/merged in the following order:
 
 1. `config/default.toml`
@@ -49,6 +49,10 @@ Configuration is applied/merged in the following order:
 ## Setup
 
 ##### Environment variables:
+
+Setting environment variables are optional. The configuration files have
+all the necessary parameters listed. By setting environment variables,
+you will be overriding the values set in the configuration files.
 
 | Name                            | Value                                                       |
 | ------------------------------- | ----------------------------------------------------------- |

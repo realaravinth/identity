@@ -1,3 +1,20 @@
+/*
+* Copyright (C) 2020  Aravinth Manivannan <realaravinth@batsense.net>
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU Affero General Public License as
+* published by the Free Software Foundation, either version 3 of the
+* License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU Affero General Public License for more details.
+*
+* You should have received a copy of the GNU Affero General Public License
+* along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 #![warn(rust_2018_idioms, elided_lifetimes_in_paths)]
 
 use pretty_env_logger;
@@ -11,9 +28,7 @@ use deadpool_postgres::Client;
 use lazy_static::lazy_static;
 use tokio_postgres::error::SqlState;
 
-#[path = "../../src/database/mod.rs"]
 mod database;
-#[path = "../../src/settings.rs"]
 mod settings;
 
 //use data::Data;
@@ -30,7 +45,7 @@ lazy_static! {
 }
 
 async fn create_table(client: &Client) -> std::result::Result<u64, tokio_postgres::Error> {
-    let up_statement = include_str!("../../migrations/2020-08-04-165420_users/up.sql");
+    let up_statement = include_str!("../migrations/2020-08-04-165420_users/up.sql");
 
     let up_command = client.prepare(&up_statement).await.unwrap();
 
@@ -38,7 +53,7 @@ async fn create_table(client: &Client) -> std::result::Result<u64, tokio_postgre
 }
 
 async fn drop_table(client: &Client) {
-    let down_statement = include_str!("../../migrations/2020-08-04-165420_users/down.sql");
+    let down_statement = include_str!("../migrations/2020-08-04-165420_users/down.sql");
     let down_command = client.prepare(&down_statement).await.unwrap();
     client.execute(&down_command, &[]).await.unwrap();
 }
