@@ -33,8 +33,12 @@ use crate::{Data, POW_SESSION_DURATION};
 #[get("/api/pow")]
 async fn get_pow(session: Session, data: web::Data<Data>) -> ServiceResult<impl Responder> {
     let session_id = session.get::<String>("PoW");
-    if let Some(_id) = session_id? {
-        session.purge();
+    if let Some(phrase) = session_id? {
+        data.redis_addr
+            .send(Command(resp_array!["DEL", &phrase,]))
+            .await
+            .unwrap()
+            .unwrap();
     }
 
     let phrase: String = thread_rng().sample_iter(&Alphanumeric).take(32).collect();

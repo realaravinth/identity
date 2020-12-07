@@ -33,7 +33,7 @@ pub enum ServiceError {
     UsernameError,
     #[error("User doesn't exist")]
     UserDoesntExist,
-    #[error("username exists")] //405
+    #[error("username or email exists")] //405
     UsernameExists,
     #[error("invalid credentials")]
     AuthorizationRequired,

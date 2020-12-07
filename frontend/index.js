@@ -25,7 +25,7 @@ const genPoW = async () => {
   return fetch(API_GET_POW)
     .then(resp => resp.json())
     .then(data => wasm.gen_pow(data.difficulty, data.phrase))
-  .then(pow => JSON.parse(pow))
+    .then(pow => JSON.parse(pow));
 };
 
 const signup = async () => {
@@ -59,7 +59,7 @@ const sendSignUp = async payload => {
     if (resp.ok) {
       alert('signed up');
     } else {
-      alert(`Error ${resp.status}`);
+      resp.json().then(resp => alert(`Error: ${resp.error}`));
     }
   });
 };
@@ -84,7 +84,7 @@ const sendSignIn = async payload => {
     if (resp.ok) {
       alert('signed in');
     } else {
-      alert(`Error ${resp.status}`);
+      resp.json().then(resp => alert(`Error: ${resp.error}`));
     }
   });
 };
