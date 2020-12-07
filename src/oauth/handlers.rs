@@ -37,8 +37,8 @@ use crate::errors::*;
 use crate::Data;
 
 static DENY_TEXT: &str = "<html>
-This page should be accessed via an oauth token from the client in the example. Click
-<a href=\"http://localhost:5000/api/oauth/authorize?response_type=code&client_id=LocalClient\">
+This page should be accessed via an oauth token from. Click
+<a href=\"https://shuttlecraft.io/api/oauth/authorize?response_type=code&client_id=Drive\">
 here</a> to begin the authorization process.
 </html>";
 
