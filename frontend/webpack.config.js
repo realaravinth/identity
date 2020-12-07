@@ -6,8 +6,6 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "bootstrap.js",
-    libraryTarget: 'var',
-    library: 'ui'
   },
   mode: "development",
   plugins: [

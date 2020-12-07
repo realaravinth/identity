@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign Up | Shuttlecraft</title>
   </head>
+  <script src="/bootstrap.js"></script>
   <link rel="stylesheet" href="main.css" />
   <body>
     <div class="container">
@@ -20,6 +21,7 @@
             autofocus="{true}"
             autocomplete="username"
             name="username"
+            id="username"
             type="text"
             placeholder="Username"
             onchange="{this.handleInputChange}"
@@ -33,9 +35,10 @@
           <input
             required="{true}"
             autofocus="{true}"
-            autocomplete="username"
-            name="username"
+            autocomplete="email"
+            name="email"
             type="email"
+            id="email"
             placeholder="Username"
             onchange="{this.handleInputChange}"
           />
@@ -50,6 +53,7 @@
             autocomplete="current-password"
             name="password"
             placeholder="Password"
+            id="password"
             type="password"
             onchange="{this.handleInputChange}"
           />
@@ -65,6 +69,7 @@
             autocomplete="username"
             name="username"
             type="password"
+            id="re-password"
             placeholder="Confirm"
             onchange="{this.handleInputChange}"
           />
@@ -72,8 +77,8 @@
 
         <div class="form-group">
           <div class="btn-container">
-            <a href="/signin">Sign in instead</a>
-            <input class="btn" type="submit" value="Sign Up" />
+            <a href="/">Sign in instead</a>
+            <input class="btn" type="button" onclick="signup()" value="Sign Up" />
           </div>
         </div>
       </form>

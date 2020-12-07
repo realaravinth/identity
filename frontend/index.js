@@ -4,8 +4,6 @@ const API_GET_POW = '/api/pow';
 const API_SIGN_IN = '/api/signin';
 const API_SIGN_UP = '/api/signup';
 
-let pow = null;
-
 const isBlankString = (value, field) => {
   if (!value.replace(/\s/g, '').length) {
     alert(`${field} can't be empty`);
@@ -23,15 +21,47 @@ const genJsonPayload = payload => {
   return value;
 };
 
-console.log('executing');
 const genPoW = async () => {
-  if (pow === null) {
-    let response = await fetch(API_GET_POW);
-    let data = await response.json();
-    console.log(data);
-    pow = wasm.gen_pow(dletata.difficulty, data.phrase);
+  return fetch(API_GET_POW)
+    .then(resp => resp.json())
+    .then(data => wasm.gen_pow(data.difficulty, data.phrase))
+  .then(pow => JSON.parse(pow))
+};
+
+const signup = async () => {
+  let username = document.getElementById('username').value;
+  let password = document.getElementById('password').value;
+  let rePassword = document.getElementById('re-password').value;
+  let email = document.getElementById('email').value;
+  isBlankString(email, 'email');
+  isBlankString(rePassword, 'password');
+  isBlankString(username, 'username');
+  isBlankString(password, 'password');
+
+  if (password !== rePassword) {
+    alert("entered passwords don't match");
+  } else {
+    let pow = await genPoW();
+    console.log(`from signup: PoW: ${pow}`);
+    const payload = {
+      username: username,
+      password: password,
+      email_id: email,
+      pow: pow,
+    };
+
+    sendSignUp(payload);
   }
-  console.log(pow);
+};
+
+const sendSignUp = async payload => {
+  fetch(API_SIGN_UP, genJsonPayload(payload)).then(resp => {
+    if (resp.ok) {
+      alert('signed up');
+    } else {
+      alert(`Error ${resp.status}`);
+    }
+  });
 };
 
 const signin = () => {
@@ -54,15 +84,10 @@ const sendSignIn = async payload => {
     if (resp.ok) {
       alert('signed in');
     } else {
-      alert(`Error &{resp.status}`);
+      alert(`Error ${resp.status}`);
     }
   });
 };
 
-genPoW().then(() => console.log('s'));
-
 window.signin = signin;
-
-module.exports = {
-  siginin: signin,
-};
+window.signup = signup;

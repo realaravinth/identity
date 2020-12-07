@@ -12,14 +12,10 @@ use pow_sha256::PoW;
 use serde::Serialize;
 
 #[wasm_bindgen]
-#[derive(Serialize, Debug)]
-pub struct Pow(PoW<Vec<u8>>);
-
-#[wasm_bindgen]
 pub fn gen_pow(difficulty_factor: u32, secret: String) -> String {
     let difficulty = u128::max_value() - u128::max_value() / difficulty_factor as u128;
     let a = PoW::prove_work(&secret.as_bytes().to_vec(), difficulty).unwrap();
-    let payload = serde_json::to_string(&Pow(a)).unwrap();
+    let payload = serde_json::to_string(&a).unwrap();
     payload
 }
 
