@@ -85,7 +85,7 @@ jobs:
         timeout-minutes: 40
         with:
           command: test
-          args: --all --release --all-features --no-fail-fast -- --nocapture
+          args: --all --release --all-features --no-fail-fast
 
       - name: Run migrations
         uses: actions-rs/cargo@v1

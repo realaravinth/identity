@@ -37,6 +37,7 @@ pub struct Server {
     pub domain: String,
     pub cookie_secret: String,
     pub profanity_filter: bool,
+    pub static_files_dir: String,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -125,7 +126,7 @@ impl Settings {
                     .short("-c")
                     .long("--config")
                     .value_name("FILE")
-                    .help("path to config file")
+                    .help("path to config file. Default: './config/default.toml'")
                     .takes_value(true)
                     .required(false),
             )

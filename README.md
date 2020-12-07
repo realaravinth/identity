@@ -55,20 +55,21 @@ Setting environment variables are optional. The configuration files have
 all the necessary parameters listed. By setting environment variables,
 you will be overriding the values set in the configuration files.
 
-| Name                            | Value                                                       |
-| ------------------------------- | ----------------------------------------------------------- |
-| `IDENTITY_MODE`                 | Run mode for choosing configuration(development/production) |
-| `IDENTITY_SMTP_KEY`             | API key                                                     |
-| `IDENTITY_DATEBASE_PASSWORD`    | Postgres password                                           |
-| `IDENTITY_DATEBASE_NAME`        | Postgres database name                                      |
-| `IDENTITY_DATEBASE_PORT`        | Postgres port                                               |
-| `IDENTITY_DATEBASE_HOSTNAME`    | Postgres hostmane                                           |
-| `IDENTITY_DATEBASE_USERNAME`    | Postgres username                                           |
-| `IDENTITY_DATEBASE_POOL`        | Postgres database connection pool size                      |
-| `IDENTITY_REDIS_PORT`           | Redis port                                                  |
-| `IDENTITY_REDIS_HOSTNAME`       | Redis hostmane                                              |
-| `IDENTITY_PORT` (or) `PORT`\*\* | The port on which you want wagon to listen to               |
-| `IDENTITY_IP`                   | The IP address on which you want wagon to listen to         |
+| Name                                   | Value                                                       |
+| -------------------------------------- | ----------------------------------------------------------- |
+| `IDENTITY_MODE`                        | Run mode for choosing configuration(development/production) |
+| `IDENTITY_SMTP_KEY`                    | API key                                                     |
+| `IDENTITY_DATEBASE_PASSWORD`           | Postgres password                                           |
+| `IDENTITY_DATEBASE_NAME`               | Postgres database name                                      |
+| `IDENTITY_DATEBASE_PORT`               | Postgres port                                               |
+| `IDENTITY_DATEBASE_HOSTNAME`           | Postgres hostmane                                           |
+| `IDENTITY_DATEBASE_USERNAME`           | Postgres username                                           |
+| `IDENTITY_DATEBASE_POOL`               | Postgres database connection pool size                      |
+| `IDENTITY_REDIS_PORT`                  | Redis port                                                  |
+| `IDENTITY_REDIS_HOSTNAME`              | Redis hostmane                                              |
+| `IDENTITY_SERVER_PORT` (or) `PORT`\*\* | The port on which you want wagon to listen to               |
+| `IDENTITY_SERVER_IP`                   | The IP address on which you want wagon to listen to         |
+| `IDENTITY_SERVER_STATIC_FILES_DIR`     | Path to directory containing static files                   |
 
 ### Usage
 
@@ -99,6 +100,7 @@ OPTIONS:
 at the root of the repository.
 
 #### CLI tool (`identity-cli`):
+
 `identity-cli` is composed of several subcommands(in devel). To see
 documentation, run `identity-cli -h':
 
@@ -120,7 +122,6 @@ OPTIONS:
 
 **NOTE:** by default, Identity will look for config files in `./config`
 at the root of the repository.
-
 
 ### Credits:
 

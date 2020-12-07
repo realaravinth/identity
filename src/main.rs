@@ -79,7 +79,7 @@ async fn main() -> std::io::Result<()> {
         create_app()
             .wrap(Compress::default())
             .data(data.clone())
-            .service(Files::new("/", "./frontend/dist").index_file("index.html"))
+            .service(Files::new("/", &SETTINGS.server.static_files_dir).index_file("index.html"))
             .wrap(Logger::default())
     })
     .bind(format!("{}:{}", &SETTINGS.server.ip, &SETTINGS.server.port))

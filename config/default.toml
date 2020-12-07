@@ -30,6 +30,8 @@ domain = "localhost"
 allow_registration = true
 # when true, usernames containing unparliamentary words are filtered out
 profanity_filter = true
+# directory containing static files
+static_files_dir = "./frontend/dist"
 
 
 
