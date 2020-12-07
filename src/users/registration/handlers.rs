@@ -34,9 +34,7 @@ pub async fn sign_up(
     let processed_creds: User = creds.process()?.into();
     let new_user = processed_creds.add_user(&data.into_inner().pool).await?;
     debug!("{:?}", new_user);
-    Ok(HttpResponse::Ok()
-        .set_header(actix_web::http::header::CONNECTION, "close")
-        .finish())
+    Ok(HttpResponse::Ok().header("Localtion", "/").finish())
 }
 
 pub fn services(cfg: &mut web::ServiceConfig) {

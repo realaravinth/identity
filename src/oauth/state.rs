@@ -41,7 +41,7 @@ pub struct State {
 
 pub enum Extras {
     AuthGet,
-    AuthPost(String),
+    AuthPost(String, String),
     Nothing,
 }
 
@@ -147,10 +147,10 @@ where
 
                 op.run(self.with_solicitor(solicitor))
             }
-            Extras::AuthPost(query_string) => {
+            Extras::AuthPost(query_string, email) => {
                 let solicitor = FnSolicitor(move |_: &mut OAuthRequest, _: Solicitation| {
                     if query_string.contains("allow") {
-                        OwnerConsent::Authorized("dummy user".to_owned())
+                        OwnerConsent::Authorized(email.to_owned())
                     } else {
                         OwnerConsent::Denied
                     }

@@ -16,10 +16,13 @@
 */
 
 use actix::prelude::*;
+use actix_identity::Identity;
 use actix_web::{
-    get, post,
+    get,
+    http::StatusCode,
+    post,
     web::{self, ServiceConfig},
-    HttpRequest,
+    HttpRequest, HttpResponse, Responder,
 };
 use oxide_auth_actix::{
     Authorize, OAuthOperation, OAuthRequest, OAuthResource, OAuthResponse, Refresh, Resource,
@@ -29,6 +32,7 @@ use oxide_auth_actix::{
 use deadpool_postgres::{Client, Pool};
 
 use super::state::*;
+use crate::errors::*;
 use crate::errors::*;
 use crate::Data;
 
@@ -62,14 +66,22 @@ async fn get_email(username: &str, db_pool: &Pool) -> ServiceResult<String> {
 async fn get_authorize(
     req: OAuthRequest,
     state: web::Data<Data>,
-) -> Result<OAuthResponse, WebError> {
-    // GET requests should not mutate server state and are extremely
-    // vulnerable accidental repetition as well as Cross-Site Request
-    // Forgery (CSRF).
-    state
-        .oauth_state
-        .send(Authorize(req).wrap(Extras::AuthGet))
-        .await?
+    id: Identity,
+) -> Result<impl Responder, WebError> {
+    if let Some(_) = id.identity() {
+        // GET requests should not mutate server state and are extremely
+        // vulnerable accidental repetition as well as Cross-Site Request
+        // Forgery (CSRF).
+        let resp = state
+            .oauth_state
+            .send(Authorize(req).wrap(Extras::AuthGet))
+            .await??;
+        Ok(resp)
+    } else {
+        OAuthResponse::ok()
+            .body("<a href='/'>Click here to sign in</a>")
+            .content_type("text/html")
+    }
 }
 
 #[post("/api/oauth/authorize")]
@@ -77,12 +89,22 @@ async fn post_authorize(
     r: HttpRequest,
     req: OAuthRequest,
     state: web::Data<Data>,
+    id: Identity,
 ) -> Result<OAuthResponse, WebError> {
-    // Some authentication should be performed here in production cases
-    state
-        .oauth_state
-        .send(Authorize(req).wrap(Extras::AuthPost(r.query_string().to_owned())))
-        .await?
+    if let Some(id) = id.identity() {
+        let email = get_email(&id, &state.pool).await;
+
+        if let Ok(email) = email {
+            state
+                .oauth_state
+                .send(Authorize(req).wrap(Extras::AuthPost(r.query_string().to_owned(), email)))
+                .await?
+        } else {
+            Err(WebError::Authorization)
+        }
+    } else {
+        Err(WebError::Authorization)
+    }
 }
 
 #[post("/api/oauth/token")]
@@ -112,7 +134,7 @@ async fn resource(req: OAuthResource, state: web::Data<Data>) -> Result<OAuthRes
             println!("{:#?}", grant);
             Ok(OAuthResponse::ok()
                 .content_type("text/plain")?
-                .body("Hello world!"))
+                .body(&grant.owner_id))
         }
         Err(Ok(e)) => Ok(e.body(DENY_TEXT)),
         Err(Err(e)) => Err(e),

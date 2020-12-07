@@ -41,8 +41,7 @@ Identity is highly configurable.
 Configuration is applied/merged in the following order:
 
 1. `config/default.toml`
-2. `config/$IDENTITY_MODE.toml`
-3. environment variables.
+2. environment variables.
 
 To make installation process seamless, identity ships with a CLI tool to
 assist in database migrations.
@@ -55,18 +54,30 @@ Setting environment variables are optional. The configuration files have
 all the necessary parameters listed. By setting environment variables,
 you will be overriding the values set in the configuration files.
 
+###### Database:
+
 | Name                                   | Value                                                       |
 | -------------------------------------- | ----------------------------------------------------------- |
-| `IDENTITY_MODE`                        | Run mode for choosing configuration(development/production) |
-| `IDENTITY_SMTP_KEY`                    | API key                                                     |
 | `IDENTITY_DATEBASE_PASSWORD`           | Postgres password                                           |
 | `IDENTITY_DATEBASE_NAME`               | Postgres database name                                      |
 | `IDENTITY_DATEBASE_PORT`               | Postgres port                                               |
 | `IDENTITY_DATEBASE_HOSTNAME`           | Postgres hostmane                                           |
 | `IDENTITY_DATEBASE_USERNAME`           | Postgres username                                           |
 | `IDENTITY_DATEBASE_POOL`               | Postgres database connection pool size                      |
+
+
+###### Redis cache:
+
+| Name                                   | Value                                                       |
+| -------------------------------------- | ----------------------------------------------------------- |
 | `IDENTITY_REDIS_PORT`                  | Redis port                                                  |
 | `IDENTITY_REDIS_HOSTNAME`              | Redis hostmane                                              |
+
+
+###### Server:
+
+| Name                                   | Value                                                       |
+| -------------------------------------- | ----------------------------------------------------------- |
 | `IDENTITY_SERVER_PORT` (or) `PORT`\*\* | The port on which you want wagon to listen to               |
 | `IDENTITY_SERVER_IP`                   | The IP address on which you want wagon to listen to         |
 | `IDENTITY_SERVER_STATIC_FILES_DIR`     | Path to directory containing static files                   |

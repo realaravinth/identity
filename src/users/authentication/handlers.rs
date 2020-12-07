@@ -15,7 +15,6 @@
 */
 
 use actix_identity::Identity;
-use actix_session::Session;
 use actix_web::{post, web, HttpResponse, Responder};
 
 use super::payload::LoginCreds;
@@ -24,7 +23,6 @@ use crate::Data;
 
 #[post("/api/signin")]
 pub async fn sign_in(
-    session: Session,
     creds: web::Json<LoginCreds>,
     data: web::Data<Data>,
     id: Identity,

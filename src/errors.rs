@@ -17,6 +17,7 @@
 
 use actix_http::ResponseBuilder;
 use actix_web::{error::ResponseError, http::header, http::StatusCode, HttpResponse};
+use oxide_auth_actix::WebError;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use tokio_pg_mapper::Error as PGMError;
@@ -109,6 +110,20 @@ impl From<PGError> for ServiceError {
         } else {
             ServiceError::InternalServerError
         }
+    }
+}
+
+impl From<WebError> for ServiceError {
+    //TODO better error handling
+    fn from(e: WebError) -> ServiceError {
+        match e {
+            WebError::Authorization => ServiceError::AuthorizationRequired,
+            _ => ServiceError::InternalServerError,
+        }
+        //if e == WebError::Authorization {
+        //    ServiceError::AuthorizationRequired
+        //}
+        //ServiceError::InternalServerError
     }
 }
 

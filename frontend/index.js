@@ -58,6 +58,7 @@ const sendSignUp = async payload => {
   fetch(API_SIGN_UP, genJsonPayload(payload)).then(resp => {
     if (resp.ok) {
       alert('signed up');
+      window.location = '/';
     } else {
       resp.json().then(resp => alert(`Error: ${resp.error}`));
     }
