@@ -25,6 +25,7 @@ use actix_web::{
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use redis_async::{resp::RespValue, resp_array};
 
+use super::payload::get_difficulty;
 use super::{Counter, PoWConfig, Visitor};
 use crate::errors::*;
 use crate::{Data, POW_SESSION_DURATION};
@@ -33,26 +34,26 @@ use crate::{Data, POW_SESSION_DURATION};
 async fn get_pow(session: Session, data: web::Data<Data>) -> ServiceResult<impl Responder> {
     let session_id = session.get::<String>("PoW");
     if let Some(_id) = session_id? {
-        Err(ServiceError::PoWRequired)
-    } else {
-        let phrase: String = thread_rng().sample_iter(&Alphanumeric).take(32).collect();
-        session.set("PoW", &phrase)?;
-        let difficulty = data.counter_addr.send(Visitor).await.unwrap();
-        data.redis_addr
-            .send(Command(resp_array![
-                "SET",
-                &phrase,
-                difficulty.to_string(),
-                "EX",
-                POW_SESSION_DURATION.to_string()
-            ]))
-            .await
-            .unwrap()
-            .unwrap();
-        let config = PoWConfig::new(&phrase, difficulty);
-        debug!("PoW generated: {:#?}", &config);
-        Ok(HttpResponse::Ok().json(config))
+        session.purge();
     }
+
+    let phrase: String = thread_rng().sample_iter(&Alphanumeric).take(32).collect();
+    session.set("PoW", &phrase)?;
+    let difficulty = data.counter_addr.send(Visitor).await.unwrap();
+    data.redis_addr
+        .send(Command(resp_array![
+            "SET",
+            &phrase,
+            difficulty.to_string(),
+            "EX",
+            POW_SESSION_DURATION.to_string()
+        ]))
+        .await
+        .unwrap()
+        .unwrap();
+    let config = PoWConfig::new(&phrase, difficulty);
+    debug!("PoW generated: {:#?}", &config);
+    Ok(HttpResponse::Ok().json(config))
 }
 
 pub fn services(cfg: &mut ServiceConfig) {
@@ -89,6 +90,6 @@ mod tests {
         )
         .await;
 
-        assert_eq!(response.status(), StatusCode::PAYMENT_REQUIRED, "pow works");
+        assert!(response.status().is_success(), "pow works");
     }
 }
