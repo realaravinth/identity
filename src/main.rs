@@ -96,7 +96,7 @@ pub fn get_identity_service() -> IdentityService<CookieIdentityPolicy> {
     IdentityService::new(
         CookieIdentityPolicy::new(cookie_secret.as_bytes())
             .name("Authorization")
-            .max_age(20)
+            .max_age(3600)
             .domain(&SETTINGS.server.domain)
             .secure(true),
     )

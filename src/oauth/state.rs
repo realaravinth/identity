@@ -58,8 +58,8 @@ impl State {
             endpoint: Generic {
                 // A registrar with one pre-registered client
                 registrar: vec![Client::public(
-                    "LocalClient",
-                    "http://localhost:8021/endpoint"
+                    "Drive",
+                    "https://drive.batsense.net/endpoint"
                         .parse::<url::Url>()
                         .unwrap()
                         .into(),
@@ -164,31 +164,76 @@ where
 }
 
 fn consent_page_html(route: &str, solicitation: Solicitation) -> String {
-    macro_rules! template {
-        () => {
-"<html>'{0:}' (at {1:}) is requesting permission for '{2:}'
-<form method=\"post\">
-    <input type=\"submit\" value=\"Accept\" formaction=\"{5:}?response_type=code&client_id={3:}{4:}&allow=true\">
-    <input type=\"submit\" value=\"Deny\" formaction=\"{5:}?response_type=code&client_id={3:}{4:}&deny=true\">
-</form>
-</html>"
-        };
-    }
-
-    let grant = solicitation.pre_grant();
-    let state = solicitation.state();
-
-    format!(
-        template!(),
-        grant.client_id,
-        grant.redirect_uri,
-        grant.scope,
-        grant.client_id,
-        if let Some(state) = state {
-            format!("&state={}", state)
-        } else {
-            String::new()
-        },
-        &route
-    )
+    //    macro_rules! template {
+    //        () => {
+    //"<html>'{0:}' (at {1:}) is requesting permission for '{2:}'
+    //<form method=\"post\">
+    //    <input type=\"submit\" value=\"Accept\" formaction=\"{5:}?response_type=code&client_id={3:}{4:}&allow=true\">
+    //    <input type=\"submit\" value=\"Deny\" formaction=\"{5:}?response_type=code&client_id={3:}{4:}&deny=true\">
+    //</form>
+    //</html>"
+    //        };
+    //    }
+    //
+    //    let grant = solicitation.pre_grant();
+    //    let state = solicitation.state();
+    //
+    //    format!(
+    //        template!(),
+    //        grant.client_id,
+    //        grant.redirect_uri,
+    //        grant.scope,
+    //        grant.client_id,
+    //        if let Some(state) = state {
+    //            format!("&state={}", state)
+    //        } else {
+    //            String::new()
+    //        },
+    //        &route
+    //    )
+    AUTHORIZE.to_string()
 }
+
+const AUTHORIZE: &str = "
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Login | Shuttlecraft</title>
+  </head>
+  <link rel='stylesheet' href='/main.css' />
+  <script src='/bootstrap.js'></script>
+
+  <body>
+    <div class='container'>
+      <form method='post'>
+        <h1>Requesting Authorization</h1>
+        <p>
+          Drive(https://drive.batsense.net) is requesting permission for
+          accessing your email ID
+        </p>
+        <div class='form-group'></div>
+
+        <div class='form-group'></div>
+
+        <div class='form-group'>
+          <div class='btn-container'>
+            <input
+              type='submit'
+              value='Deny'
+              class='btn'
+              formaction='/api/oauth/authorize?response_type=code&client_id=Drive&deny=true'
+            />
+            <input
+              class='btn'
+              type='submit'
+              value='Accept'
+              formaction='/api/oauth/authorize?response_type=code&client_id=Drive&allow=true'
+            />
+          </div>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>";
