@@ -114,7 +114,29 @@ pub struct Settings {
 
 #[cfg(not(tarpaulin_include))]
 impl Settings {
-    pub fn new() -> Result<Self, ConfigError> {
+    pub fn get_settings() -> Self {
+        use clap::{self, Arg, SubCommand};
+        let matches = clap::App::new("Identity")
+            .version("0.1")
+            .author("Aravinth Manivannan <realaravinth@batsense.net>")
+            .about("An identity management platform for the dweb")
+            .arg(
+                Arg::with_name("config")
+                    .short("-c")
+                    .long("--config")
+                    .value_name("FILE")
+                    .help("path to config file")
+                    .takes_value(true)
+                    .required(false),
+            )
+            .get_matches();
+
+        let config_val = matches.value_of("config").unwrap_or("config/default.toml");
+
+        Settings::new(config_val).expect("couldn't load settings")
+    }
+
+    pub fn new(path: &str) -> Result<Self, ConfigError> {
         let mut s = Config::new();
 
         // setting default values
@@ -128,12 +150,7 @@ impl Settings {
             .expect("Couldn't get the number of CPUs");
 
         // merging default config from file
-        s.merge(File::with_name("config/default"))?;
-
-        // setting RUN_MODE, default 0s development
-        let env = env::var("RUN_MODE").unwrap_or("development".into());
-
-        s.merge(File::with_name(&format!("config/{}", env)).required(false))?;
+        s.merge(File::with_name(path))?;
 
         s.merge(Environment::with_prefix("IDENTITY"))?;
 
@@ -207,6 +224,8 @@ mod tests {
     static POOL: u32 = 4;
     static PASSWORD: &str = "password";
     static URL: &str = "postgres://postgres:password@localhost:5432/postgres";
+
+    static CONFIG: &str = "config/default.toml";
 
     fn get_database() -> Database {
         Database {
@@ -298,7 +317,7 @@ mod tests {
 
     #[test]
     fn settings_from_file_works() {
-        let config = Settings::new().unwrap();
+        let config = Settings::new(CONFIG).unwrap();
 
         //        assert_eq!(config.database.username, "aravinth", "username checksout");
         //        assert_eq!(config.database.port, PORT, "port checksout");
@@ -320,7 +339,7 @@ mod tests {
         let original_url = var("DATABASE_URL");
         set_var("DATABASE_URL", URL);
 
-        let config = Settings::new().unwrap();
+        let config = Settings::new(CONFIG).unwrap();
 
         assert_eq!(config.database.username, USERNAME, "username checksout");
         assert_eq!(config.database.port, PORT, "port checksout");

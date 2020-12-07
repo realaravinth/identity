@@ -74,3 +74,5 @@ deadpool = "0.5"
 
 actix-redis = "0.9"
 redis-async = "0.6"
+
+clap = "2.33"

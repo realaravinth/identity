@@ -57,7 +57,7 @@ use users::USERNAME_CASE_MAPPED;
 pub const POW_SESSION_DURATION: u64 = 60;
 
 lazy_static! {
-    pub static ref SETTINGS: Settings = Settings::new().expect("couldn't load settings");
+    pub static ref SETTINGS: Settings = Settings::get_settings();
     pub static ref RE_BLACKLIST: Regex =
         Regex::new(BLACKLIST).expect("couldn't setup blacklist list filter");
     pub static ref RE_PROFAINITY: Regex =
@@ -70,7 +70,6 @@ lazy_static! {
 #[cfg(not(tarpaulin_include))]
 async fn main() -> std::io::Result<()> {
     pretty_env_logger::init();
-    lazy_static::initialize(&SETTINGS);
 
     let data = Data::default();
 

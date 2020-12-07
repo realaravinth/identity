@@ -41,7 +41,7 @@ static HASH: &str = "$argon2i$v=19$m=656,t=5,p=12$b0p3MnZIbDRwRzUzTDRhZW9weWpBWF
 static EMAIL: &str = "batman@we.com";
 
 lazy_static! {
-    pub static ref SETTINGS: Settings = Settings::new().expect("couldn't load settings");
+    pub static ref SETTINGS: Settings = Settings::get_settings();
 }
 
 async fn create_table(client: &Client) -> std::result::Result<u64, tokio_postgres::Error> {
