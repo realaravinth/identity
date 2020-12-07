@@ -6,12 +6,13 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "bootstrap.js",
+    libraryTarget: 'var',
+    library: 'ui'
   },
   mode: "development",
   plugins: [
     new CopyWebpackPlugin(['index.html']),
     new CopyWebpackPlugin(['signup.html']),
-    new CopyWebpackPlugin(['signin.html']),
     new CopyWebpackPlugin(['main.css']),
     new CopyWebpackPlugin(['./favicon/favicon.ico'])
   ],

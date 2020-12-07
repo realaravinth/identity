@@ -80,7 +80,7 @@ async fn main() -> std::io::Result<()> {
         create_app()
             .wrap(Compress::default())
             .data(data.clone())
-            .service(Files::new("/", "./frontend/dist").index_file("signin.html"))
+            .service(Files::new("/", "./frontend/dist").index_file("index.html"))
             .wrap(Logger::default())
     })
     .bind(format!("{}:{}", &SETTINGS.server.ip, &SETTINGS.server.port))

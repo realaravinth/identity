@@ -7,7 +7,6 @@
   </head>
   <link rel="stylesheet" href="main.css" />
   <script src="/bootstrap.js"></script>
-    <script src="./bootstrap.js"></script>
 
   <body>
     <div class="container">
@@ -24,8 +23,8 @@
             autocomplete="username"
             name="username"
             type="text"
+            id="username"
             placeholder="Username"
-            onchange="{this.handleInputChange}"
           />
         </div>
 
@@ -36,17 +35,27 @@
           <input
             required="{true}"
             autocomplete="current-password"
+            id="password"
             name="password"
             placeholder="Password"
             type="password"
-            onchange="{this.handleInputChange}"
           />
         </div>
 
+        <script>
+          window.onload = function() {
+            ui.signin();
+          };
+        </script>
         <div class="form-group">
           <div class="btn-container">
             <a href="/signup">Create Accoount</a>
-            <input class="btn" type="submit" value="Log in" />
+            <input
+              class="btn"
+              type="button"
+              value="Log in"
+              onclick="signin()"
+            />
           </div>
         </div>
       </form>

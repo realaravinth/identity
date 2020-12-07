@@ -94,11 +94,11 @@ async fn token(req: OAuthRequest, state: web::Data<Data>) -> Result<OAuthRespons
 }
 
 #[post("/api/oauth/refresh")]
-async fn refresh(
-    req: OAuthRequest,
-    state: web::Data<Addr<State>>,
-) -> Result<OAuthResponse, WebError> {
-    state.send(Refresh(req).wrap(Extras::Nothing)).await?
+async fn refresh(req: OAuthRequest, state: web::Data<Data>) -> Result<OAuthResponse, WebError> {
+    state
+        .oauth_state
+        .send(Refresh(req).wrap(Extras::Nothing))
+        .await?
 }
 
 #[get("/api/oauth/resource")]
@@ -108,9 +108,12 @@ async fn resource(req: OAuthResource, state: web::Data<Data>) -> Result<OAuthRes
         .send(Resource(req.into_request()).wrap(Extras::Nothing))
         .await?
     {
-        Ok(_grant) => Ok(OAuthResponse::ok()
-            .content_type("text/plain")?
-            .body("Hello world!")),
+        Ok(grant) => {
+            println!("{:#?}", grant);
+            Ok(OAuthResponse::ok()
+                .content_type("text/plain")?
+                .body("Hello world!"))
+        }
         Err(Ok(e)) => Ok(e.body(DENY_TEXT)),
         Err(Err(e)) => Err(e),
     }
